@@ -36,6 +36,8 @@ public class JSONWebToken {
         return null;
     }
 
-
+    public String getOrigin() {
+        return origin;
+    }
 
 }

@@ -20,19 +20,8 @@ public class HTTPClient {
         this.requestQueue.start();
     }
 
-    public void post(String path, Map<String, Object> formData, RequestListener requestListener) {
-        System.out.println(formData);
-        PandemicRequest request = PandemicRequest.withFormData(
-                endpointURL + path,
-                formData,
-                response -> {
-                    requestListener.onResponse(HTTPStatusCode.OK, response);
-                },
-                error -> {
-                    requestListener.onResponse(HTTPStatusCode.fromCode(error.networkResponse.statusCode), new String(error.networkResponse.data));
-                }
-        );
-        requestQueue.add(request);
+    public void queue(PandemicRequest pandemicRequest) {
+        requestQueue.add(pandemicRequest);
     }
 
 }

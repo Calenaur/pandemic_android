@@ -9,4 +9,8 @@ public class LocalUser extends User {
     public LocalUser(JSONWebToken jwt) {
         this.jwt = jwt;
     }
+
+    public JSONWebToken getJWT() {
+        return jwt;
+    }
 }
