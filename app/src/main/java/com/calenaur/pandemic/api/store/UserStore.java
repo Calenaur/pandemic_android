@@ -1,9 +1,11 @@
 package com.calenaur.pandemic.api.store;
 
+import com.android.volley.Request;
 import com.calenaur.pandemic.api.model.user.JWT.JSONWebToken;
 import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.net.HTTPClient;
 import com.calenaur.pandemic.api.net.HTTPStatusCode;
+import com.calenaur.pandemic.api.net.PandemicRequest;
 import com.calenaur.pandemic.api.net.response.ErrorCode;
 import com.calenaur.pandemic.api.net.response.LoginResponse;
 import com.fasterxml.jackson.jr.ob.JSON;
@@ -20,25 +22,32 @@ public class UserStore {
     }
 
     public void login(String username, String password, PromiseHandler<LocalUser> promiseHandler) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("username", username);
-        params.put("password", password);
-        httpClient.post("/login", params, (code, result) -> {
-            LoginResponse response;
-            try {
-                response = JSON.std.beanFrom(LoginResponse.class, result);
-            } catch (IOException ignored) {
-                promiseHandler.onError(ErrorCode.fromResponse(null));
-                return;
-            }
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("username", username);
+        formData.put("password", password);
 
-            if (code == HTTPStatusCode.OK) {
-                promiseHandler.onDone(new LocalUser(JSONWebToken.fromToken(response.token)));
-                return;
-            }
+        PandemicRequest request = new PandemicRequest.Builder()
+                .setMethod(Request.Method.POST)
+                .setPath("/login")
+                .setFormData(formData)
+                .setRequestListener((code, result) -> {
+                    LoginResponse response;
+                    try {
+                        response = JSON.std.beanFrom(LoginResponse.class, result);
+                    } catch (IOException ignored) {
+                        promiseHandler.onError(ErrorCode.fromResponse(null));
+                        return;
+                    }
 
-            promiseHandler.onError(ErrorCode.fromResponse(response));
-        });
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(new LocalUser(JSONWebToken.fromToken(response.token)));
+                        return;
+                    }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(response));
+                }).create();
+
+        httpClient.queue(request);
     }
 
     public void signup() {
