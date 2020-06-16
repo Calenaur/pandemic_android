@@ -2,7 +2,17 @@
     <string name="login_header">Login</string>
     <string name="login_username">Username</string>
     <string name="login_password">Password</string>
+    <string name="signup">Account created!</string>
+    <string name="production">Production</string>
+    <string name="account">Account</string>
     <string name="register">Register</string>
     <string name="pandemic_logo_description">Pandemic Logo</string>
     <string name="error_unknown">Unknown error</string>
+    <string name="error_username_length">Username length must be between 2 and 16 characters</string>
+    <string name="error_username_special">Username can not contain special characters</string>
+    <string name="error_password_length">Password must be between 8–64 characters long</string>
+    <string name="error_password_uppercase">Password must contain at least one uppercase character</string>
+    <string name="error_password_numeric">Password must contain at least one number</string>
+    <string name="error_invalid_password">Invalid password</string>
+    <string name="error_user_not_found">User not found</string>
 </resources>

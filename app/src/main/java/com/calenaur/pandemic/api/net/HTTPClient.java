@@ -2,12 +2,8 @@ package com.calenaur.pandemic.api.net;
 
 import android.content.Context;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-
-import java.util.Map;
-
 
 public class HTTPClient {
 
@@ -24,4 +20,7 @@ public class HTTPClient {
         requestQueue.add(pandemicRequest);
     }
 
+    public String getEndpointURL() {
+        return endpointURL;
+    }
 }
