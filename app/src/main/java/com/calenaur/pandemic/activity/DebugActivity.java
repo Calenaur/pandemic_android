@@ -11,8 +11,8 @@ public class DebugActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = new Intent(this, LoginActivity.class);
-        intent.putExtra("username", "");
-        intent.putExtra("password", "");
+        intent.putExtra("username", "test");
+        intent.putExtra("password", "Testtest1");
         startActivity(intent);
         finish();
     }
