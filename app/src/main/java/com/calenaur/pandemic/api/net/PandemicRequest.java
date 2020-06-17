@@ -11,8 +11,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonRequest;
 import com.calenaur.pandemic.api.model.user.LocalUser;
-import com.calenaur.pandemic.api.store.PromiseHandler;
-
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,10 +54,15 @@ public class PandemicRequest extends JsonRequest<String> {
 
     public static class Builder {
         private int method;
+        private String url;
         private String path;
         private String formData;
         private LocalUser localUser;
         private RequestListener requestListener;
+
+        public Builder(HTTPClient httpClient) {
+            this.url = httpClient.getEndpointURL();
+        }
 
         public Builder setMethod(int method) {
             this.method = method;
@@ -95,16 +98,24 @@ public class PandemicRequest extends JsonRequest<String> {
         }
 
         public PandemicRequest create() {
-            return new PandemicRequest(method, path, formData, localUser,
+            System.out.println(String.format("[PandemicRequest] Request -> (method: %d, url: %s, form-data: %s)", method, url+path, formData));
+            return new PandemicRequest(method, url + path, formData, localUser,
                     response -> {
                         if (requestListener == null)
                             return;
 
+                        System.out.println("[PandemicRequest] Response -> " + response);
                         requestListener.onResponse(HTTPStatusCode.OK, response);
                     },
                     error -> {
                         if (requestListener == null)
                             return;
+
+                        System.out.println("[PandemicRequest] Response error -> " + error);
+                        if (error.networkResponse == null) {
+                            requestListener.onResponse(HTTPStatusCode.NOT_FOUND, "");
+                            return;
+                        }
 
                         requestListener.onResponse(HTTPStatusCode.fromCode(error.networkResponse.statusCode), new String(error.networkResponse.data));
                     }

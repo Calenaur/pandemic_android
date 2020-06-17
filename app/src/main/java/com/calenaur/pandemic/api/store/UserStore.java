@@ -6,6 +6,7 @@ import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.net.HTTPClient;
 import com.calenaur.pandemic.api.net.HTTPStatusCode;
 import com.calenaur.pandemic.api.net.PandemicRequest;
+import com.calenaur.pandemic.api.net.response.DefaultResponse;
 import com.calenaur.pandemic.api.net.response.ErrorCode;
 import com.calenaur.pandemic.api.net.response.LoginResponse;
 import com.fasterxml.jackson.jr.ob.JSON;
@@ -26,7 +27,7 @@ public class UserStore {
         formData.put("username", username);
         formData.put("password", password);
 
-        PandemicRequest request = new PandemicRequest.Builder()
+        PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.POST)
                 .setPath("/login")
                 .setFormData(formData)
@@ -50,7 +51,30 @@ public class UserStore {
         httpClient.queue(request);
     }
 
-    public void signup() {
+    public void register(String username, String password, PromiseHandler<Object> promiseHandler) {
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("username", username);
+        formData.put("password", password);
+
+        PandemicRequest request = new PandemicRequest.Builder(httpClient)
+                .setMethod(Request.Method.POST)
+                .setPath("/signup")
+                .setFormData(formData)
+                .setRequestListener((code, result) -> {
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(null);
+                        return;
+                    }
+
+                    try {
+                        DefaultResponse response = JSON.std.beanFrom(DefaultResponse.class, result);
+                        promiseHandler.onError(ErrorCode.fromResponse(response));
+                    } catch (IOException ignored) {
+                        promiseHandler.onError(ErrorCode.fromResponse(null));
+                    }
+                }).create();
+
+        httpClient.queue(request);
     }
 
 }
