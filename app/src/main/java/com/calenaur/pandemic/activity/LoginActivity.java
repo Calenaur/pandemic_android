@@ -29,9 +29,6 @@ public class LoginActivity extends AppCompatActivity {
         inputPassword = findViewById(R.id.inputPassword);
         findViewById(R.id.submitLogin).setOnClickListener(this::onLogin);
         findViewById(R.id.submitRegister).setOnClickListener(this::onRegister);
-        inputUsername.setText("test");
-        inputPassword.setText("Testtest1");
-        onLogin(null);
     }
 
     public void onSubmit() {
