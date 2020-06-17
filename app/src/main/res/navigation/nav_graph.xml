@@ -10,6 +10,13 @@
         android:name="com.calenaur.pandemic.fragment.ProductionFragment"
         android:label="@string/production"
         tools:layout="@layout/fragment_production" />
+
+    <fragment
+        android:id="@+id/balanceFragment"
+        android:name="com.calenaur.pandemic.fragment.BalanceFragment"
+        android:label="@string/production"
+        tools:layout="@layout/fragment_balance" />
+
     <fragment
         android:id="@+id/accountFragment"
         android:name="com.calenaur.pandemic.fragment.AccountFragment"
