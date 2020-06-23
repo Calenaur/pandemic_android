@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void startGameActivity(LocalUser localUser) {
         Intent intent = new Intent(this, GameActivity.class);
+        intent.putExtra("local_user", localUser);
         startActivity(intent);
         finish();
     }

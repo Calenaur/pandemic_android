@@ -2,6 +2,9 @@
     <string name="login_header">Login</string>
     <string name="login_username">Username</string>
     <string name="login_password">Password</string>
+    <string name="account_guid">GUID</string>
+    <string name="account_access">Access Level</string>
+    <string name="account_balance">Balance</string>
     <string name="signup">Account created!</string>
     <string name="production">Production</string>
     <string name="account">Account</string>
@@ -15,4 +18,10 @@
     <string name="error_password_numeric">Password must contain at least one number</string>
     <string name="error_invalid_password">Invalid password</string>
     <string name="error_user_not_found">User not found</string>
+    <string name="money">Money</string>
+    <string-array name="production_placeholder">
+        <item>wow</item>
+        <item>nice</item>
+        <item>very cool</item>
+    </string-array>
 </resources>

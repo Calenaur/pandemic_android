@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TitledTextView">
+        <attr name="title" format="string" />
+        <attr name="text" format="string" />
+        <attr name="titleViewStyle" format="reference"/>
+        <attr name="textViewStyle" format="reference"/>
+    </declare-styleable>
+</resources>

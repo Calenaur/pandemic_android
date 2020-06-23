@@ -41,7 +41,11 @@ public class UserStore {
                     }
 
                     if (code == HTTPStatusCode.OK) {
-                        promiseHandler.onDone(new LocalUser(JSONWebToken.fromToken(response.token)));
+                        JSONWebToken jwt = JSONWebToken.fromString(response.token);
+                        if (jwt == null)
+                            promiseHandler.onError(null);
+
+                        promiseHandler.onDone(LocalUser.fromToken(jwt));
                         return;
                     }
 

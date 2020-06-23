@@ -1,14 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
     tools:context=".fragment.AccountFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.calenaur.pandemic.view.TitledTextView
+        android:id="@+id/guid"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="asdasdas" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        app:title="@string/account_guid" />
 
-</FrameLayout>
+    <com.calenaur.pandemic.view.TitledTextView
+        android:id="@+id/username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        app:title="@string/login_username" />
+
+    <com.calenaur.pandemic.view.TitledTextView
+        android:id="@+id/balance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        app:title="@string/account_balance" />
+
+    <com.calenaur.pandemic.view.TitledTextView
+        android:id="@+id/access"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/account_access" />
+
+</LinearLayout>
