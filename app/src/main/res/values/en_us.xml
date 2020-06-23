@@ -15,4 +15,7 @@
     <string name="error_password_numeric">Password must contain at least one number</string>
     <string name="error_invalid_password">Invalid password</string>
     <string name="error_user_not_found">User not found</string>
+
+    <string name="money">Money</string>
+
 </resources>
