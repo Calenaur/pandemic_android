@@ -25,17 +25,14 @@ public class SharedGameDataViewModel extends ViewModel {
     * Instantiates the value of balance if null.
     * Increment the balance variable using the value of the medication.
     * */
-    public int incrementBalance(){
+    public void incrementBalance(){
         if(balance.getValue() == null){
             balance.setValue(0L);
         }if(medication.getValue() == null){
             medication.setValue(new Medication(1, "Pain Killer", 10));
         }else{
-            int worth = medication.getValue().getWorth();
-            balance.setValue(balance.getValue() + worth);
-            return worth;
+            balance.setValue(balance.getValue() +  medication.getValue().getWorth());
         }
-        return -1;
     }
 
     public void setApi(API api) {
@@ -70,6 +67,15 @@ public class SharedGameDataViewModel extends ViewModel {
     public void setMedication(MutableLiveData<Medication> medications) { this.medication = medications; }
     public MutableLiveData<Medication> getMedication() {
         return medication;
+    }
+    public int getWorth(){
+        Medication med = medication.getValue();
+        if (med == null){
+            return 0;
+        }
+        else{
+            return med.getWorth();
+        }
     }
 
     public Registrar getRegistrar() {
