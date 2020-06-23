@@ -16,14 +16,17 @@ public class SharedGameDataViewModel extends ViewModel {
     * Instantiates the value of balance if null.
     * Increment the balance variable using the value of the medication.
     * */
-    public void incrementBalance(){
+    public int incrementBalance(){
         if(balance.getValue() == null){
             balance.setValue(0L);
+        }if(medication.getValue() == null){
+            medication.setValue(new Medication(1, "Pain Killer", 10));
         }else{
-            //TODO Placeholder noted below for getting medicine worth.
-            //balance.setValue(balance.getValue() + medications.getValue().getWorth());
-            balance.setValue((long) (balance.getValue() + Math.pow(10, 10)));
+            int worth = medication.getValue().getWorth();
+            balance.setValue(balance.getValue() + worth);
+            return worth;
         }
+        return -1;
     }
 
     /*

@@ -16,16 +16,18 @@ import android.widget.TextView;
 
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
+import com.tomer.fadingtextview.FadingTextView;
 
 public class ProductionFragment extends Fragment {
 
     private static final String balanceText = "$ :";
+    private static final String[] fadetests = {"wow", "damn dude", "amazing", "good job"};
 
     private SharedGameDataViewModel balanceViewModel;
 
     private ImageView generator;
     private TextView counter;
-    private TextView collectionIndicator;
+    private FadingTextView collectionIndicator;
 
     @Nullable
     @Override
@@ -40,7 +42,10 @@ public class ProductionFragment extends Fragment {
         counter = view.findViewById(R.id.counter);
         collectionIndicator = view.findViewById(R.id.collectionIndicator);
         counter.setText(balanceText+ 0);
-        generator.setOnClickListener((v) -> balanceViewModel.incrementBalance());
+        collectionIndicator.setTexts(fadetests);
+        generator.setOnClickListener((v) -> {
+            balanceViewModel.incrementBalance();
+        });
     }
 
     @SuppressLint("SetTextI18n")
@@ -51,13 +56,5 @@ public class ProductionFragment extends Fragment {
         balanceViewModel.getBalance().observe(getViewLifecycleOwner(), balance -> {
             counter.setText(balanceText + balanceViewModel.getAppendix());
         });
-
-        ValueAnimator valueAnimator = ValueAnimator.ofFloat(1f, 0f);
-        valueAnimator.setDuration(5000);
-        valueAnimator.addUpdateListener(animation -> {
-            float alpha = (float) animation.getAnimatedValue();
-            collectionIndicator.setAlpha(alpha);
-        });
-        valueAnimator.start();
     }
 }
