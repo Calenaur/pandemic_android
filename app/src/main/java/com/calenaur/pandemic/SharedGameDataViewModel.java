@@ -10,8 +10,12 @@ import com.calenaur.pandemic.api.model.medication.Medication;
 
 public class SharedGameDataViewModel extends ViewModel {
     private MutableLiveData<Long> balance = new MutableLiveData<>();
-    private MutableLiveData<Medication> medications = new MutableLiveData<>();
+    private MutableLiveData<Medication> medication = new MutableLiveData<>();
 
+    /*
+    * Instantiates the value of balance if null.
+    * Increment the balance variable using the value of the medication.
+    * */
     public void incrementBalance(){
         if(balance.getValue() == null){
             balance.setValue(0L);
@@ -22,6 +26,9 @@ public class SharedGameDataViewModel extends ViewModel {
         }
     }
 
+    /*
+    * Balance getter and setter.
+    * */
     public void setBalance(Long input){
         balance.setValue(input);
     }
@@ -29,13 +36,17 @@ public class SharedGameDataViewModel extends ViewModel {
         return balance;
     }
 
-    public void setMedications(MutableLiveData<Medication> medications) {
-        this.medications = medications;
-    }
-    public MutableLiveData<Medication> getMedications() {
-        return medications;
+    /*
+    * Medication getter ans setter.
+    * */
+    public void setMedication(MutableLiveData<Medication> medications) { this.medication = medications; }
+    public MutableLiveData<Medication> getMedication() {
+        return medication;
     }
 
+    /*
+    * Generate the appendixes for balance depending on its cardinal number.
+    * */
     @SuppressLint("DefaultLocale")
     public String getAppendix(){
         if (balance.getValue() == null){

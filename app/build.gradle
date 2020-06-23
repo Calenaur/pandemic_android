@@ -45,7 +45,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
     // Lifecycles only (without ViewModel or LiveData)
     implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
-
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
 
     // Saved state module for ViewModel
@@ -54,6 +53,7 @@ dependencies {
     // Annotation processor
     //noinspection LifecycleAnnotationProcessorWithJava8
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+
     // alternately - if using Java8, use the following instead of lifecycle-compiler
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
@@ -69,8 +69,13 @@ dependencies {
     // optional - Test helpers for LiveData
     testImplementation "androidx.arch.core:core-testing:$arch_version"
 
+    //Fragment navigation
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
+
+    //Fading TextView
+    implementation 'com.tomer:fadingtextview:2.5'
+
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
