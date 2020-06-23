@@ -1,5 +1,6 @@
 package com.calenaur.pandemic.fragment;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 
@@ -24,6 +25,7 @@ public class ProductionFragment extends Fragment {
 
     private ImageView generator;
     private TextView counter;
+    private TextView collectionIndicator;
 
     @Nullable
     @Override
@@ -36,8 +38,9 @@ public class ProductionFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         generator = view.findViewById(R.id.generator);
         counter = view.findViewById(R.id.counter);
+        collectionIndicator = view.findViewById(R.id.collectionIndicator);
         counter.setText(balanceText+ 0);
-        generator.setOnClickListener((v) -> balanceViewModel.incrementBalance(100));
+        generator.setOnClickListener((v) -> balanceViewModel.incrementBalance());
     }
 
     @SuppressLint("SetTextI18n")
@@ -46,21 +49,15 @@ public class ProductionFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         balanceViewModel = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
         balanceViewModel.getBalance().observe(getViewLifecycleOwner(), balance -> {
-            counter.setText(balanceText + getAppendix(balance));
+            counter.setText(balanceText + balanceViewModel.getAppendix());
         });
-    }
 
-    public String getAppendix(long value){
-        //TODO optimise the conversion check
-
-        if (value < 1000){
-            return ""+value;
-        }else if(value > 1000 && value < 1000000){
-            return ""+(int)value/1000+"K";
-        }else if(value > 1000000 && value < 1000000000){
-            return ""+(int)value/1000000+"M";
-        }
-        
-        return "";
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(1f, 0f);
+        valueAnimator.setDuration(5000);
+        valueAnimator.addUpdateListener(animation -> {
+            float alpha = (float) animation.getAnimatedValue();
+            collectionIndicator.setAlpha(alpha);
+        });
+        valueAnimator.start();
     }
 }

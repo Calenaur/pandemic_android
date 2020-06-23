@@ -24,7 +24,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             tools:ignore="RtlSymmetry" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".5"
@@ -38,6 +38,20 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="52dp"
                 android:src="@drawable/ic_antivirus" />
-        </LinearLayout>
+
+            <TextView
+                android:id="@+id/collectionIndicator"
+                android:layout_width="62dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="130dp"
+                android:layout_marginTop="52dp"
+                android:layout_marginEnd="219dp"
+                android:layout_marginBottom="285dp"
+                android:hint="hellow"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>
