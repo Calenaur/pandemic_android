@@ -23,6 +23,13 @@
         app:title="@string/login_username" />
 
     <com.calenaur.pandemic.view.TitledTextView
+        android:id="@+id/balance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        app:title="@string/account_balance" />
+
+    <com.calenaur.pandemic.view.TitledTextView
         android:id="@+id/access"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

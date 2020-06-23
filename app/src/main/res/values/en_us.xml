@@ -4,6 +4,7 @@
     <string name="login_password">Password</string>
     <string name="account_guid">GUID</string>
     <string name="account_access">Access Level</string>
+    <string name="account_balance">Balance</string>
     <string name="signup">Account created!</string>
     <string name="production">Production</string>
     <string name="account">Account</string>

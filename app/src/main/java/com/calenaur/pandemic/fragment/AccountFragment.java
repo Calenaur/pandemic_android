@@ -19,6 +19,7 @@ public class AccountFragment extends Fragment {
 
     private TitledTextView guid;
     private TitledTextView username;
+    private TitledTextView balance;
     private TitledTextView access;
 
     @Override
@@ -29,6 +30,7 @@ public class AccountFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         guid = view.findViewById(R.id.guid);
         username = view.findViewById(R.id.username);
+        balance = view.findViewById(R.id.balance);
         access = view.findViewById(R.id.access);
         refresh();
     }
@@ -44,6 +46,7 @@ public class AccountFragment extends Fragment {
 
         guid.setText(localUser.getUid());
         username.setText(localUser.getUsername());
+        balance.setText("$" + localUser.getBalance());
         access.setText(String.valueOf(localUser.getAccessLevel()));
     }
 
