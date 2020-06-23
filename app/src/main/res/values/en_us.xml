@@ -18,7 +18,10 @@
     <string name="error_password_numeric">Password must contain at least one number</string>
     <string name="error_invalid_password">Invalid password</string>
     <string name="error_user_not_found">User not found</string>
-
     <string name="money">Money</string>
-
+    <string-array name="production_placeholder">
+        <item>wow</item>
+        <item>nice</item>
+        <item>very cool</item>
+    </string-array>
 </resources>

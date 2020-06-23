@@ -50,6 +50,7 @@
                 android:layout_marginTop="52dp"
                 android:layout_marginEnd="219dp"
                 android:layout_marginBottom="285dp"
+                app:texts="@array/production_placeholder"
                 android:hint="@string/money"
                 app:timeout="500"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
