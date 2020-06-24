@@ -9,6 +9,7 @@
     <string name="insufficient_balance">Insufficient balance</string>
     <string name="cancel">Cancel</string>
     <string name="production">Production</string>
+    <string name="medicine">Medicine</string>
     <string name="account">Account</string>
     <string name="register">Register</string>
     <string name="research">Research</string>

@@ -100,7 +100,7 @@ public class SharedGameDataViewModel extends ViewModel {
         if ( value < Math.pow(10,3)){
             return value.toString();
         }else{
-            for(int i = 0; i < appendixes.length; i++) {
+            for(int i = 1; i < appendixes.length; i++) {
                 if (value >= Math.pow(10, i*3) && value < Math.pow(10, (i+1)*3)) {
                     return String.format("%.1f %s", value / Math.pow(10, i*3), appendixes[i]);
                 }

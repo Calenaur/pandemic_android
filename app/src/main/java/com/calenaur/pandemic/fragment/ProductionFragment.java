@@ -53,7 +53,7 @@ public class ProductionFragment extends Fragment {
             }
             sharedGameDataViewModel.incrementBalance();
             TextView indicator = new TextView(getContext());
-            
+
             final Animation out = new AlphaAnimation(1.0f, 0.0f);
             out.setDuration(1000);
 
@@ -107,6 +107,7 @@ public class ProductionFragment extends Fragment {
             public void onError(ErrorCode errorCode) {
                 System.out.println(errorCode);
             }
+
         });
     }
 }
