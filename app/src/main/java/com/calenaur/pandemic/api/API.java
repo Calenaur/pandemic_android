@@ -2,6 +2,7 @@ package com.calenaur.pandemic.api;
 
 import android.content.Context;
 import com.calenaur.pandemic.api.net.HTTPClient;
+import com.calenaur.pandemic.api.store.MedicineStore;
 import com.calenaur.pandemic.api.store.UserStore;
 
 public class API {
@@ -9,6 +10,7 @@ public class API {
     private Context context;
     private HTTPClient httpClient;
     private UserStore userStore;
+    private MedicineStore medicineStore;
 
     public API(Context context) {
         this.context = context;
@@ -20,4 +22,7 @@ public class API {
         return userStore;
     }
 
+    public MedicineStore getMedicineStore() {
+        return medicineStore;
+    }
 }
