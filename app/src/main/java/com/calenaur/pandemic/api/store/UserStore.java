@@ -84,7 +84,7 @@ public class UserStore {
         httpClient.queue(request);
     }
 
-    public void userMedications(PromiseHandler<Object> promiseHandler) {
+    public void userMedications(LocalUser localUser, PromiseHandler<UserMedication[]> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
                 .setPath("/medication")
@@ -108,7 +108,7 @@ public class UserStore {
         httpClient.queue(request);
     }
 
-    public void medicationsById(int id, PromiseHandler<Object> promiseHandler) {
+    public void medicationsById(LocalUser localUser, int id, PromiseHandler<UserMedication> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
                 .setPath("/medication/"+id)

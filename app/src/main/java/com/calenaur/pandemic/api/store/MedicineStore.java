@@ -1,6 +1,9 @@
 package com.calenaur.pandemic.api.store;
 
 import com.android.volley.Request;
+import com.calenaur.pandemic.api.model.medication.Medication;
+import com.calenaur.pandemic.api.model.medication.MedicationTrait;
+import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.net.HTTPClient;
 import com.calenaur.pandemic.api.net.HTTPStatusCode;
 import com.calenaur.pandemic.api.net.PandemicRequest;
@@ -21,9 +24,10 @@ public class MedicineStore {
         this.httpClient = httpClient;
     }
 
-    public void medications(PromiseHandler<Object> promiseHandler) {
+    public void medications(LocalUser localUser, PromiseHandler<Medication[]> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
+                .setLocalUser(localUser)
                 .setPath("/medication")
                 .setRequestListener((code, result) -> {
                     MedicationResponse response;
@@ -45,9 +49,10 @@ public class MedicineStore {
         httpClient.queue(request);
     }
 
-    public void medicationById(int id, PromiseHandler<Object> promiseHandler) {
+    public void medicationById(LocalUser localUser, int id, PromiseHandler<Medication> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
+                .setLocalUser(localUser)
                 .setPath("/medication/" + id)
                 .setRequestListener((code, result) -> {
                     MedicationByIdResponse response;
@@ -69,9 +74,10 @@ public class MedicineStore {
         httpClient.queue(request);
     }
 
-    public void medicationTraits(PromiseHandler<Object> promiseHandler) {
+    public void medicationTraits(LocalUser localUser, PromiseHandler<MedicationTrait[]> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
+                .setLocalUser(localUser)
                 .setPath("/medication/trait")
                 .setRequestListener((code, result) -> {
                     MedicationTraitResponse response;
@@ -93,9 +99,10 @@ public class MedicineStore {
         httpClient.queue(request);
     }
 
-    public void medicationTraitById(int id, PromiseHandler<Object> promiseHandler) {
+    public void medicationTraitById(LocalUser localUser, int id, PromiseHandler<MedicationTrait> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
+                .setLocalUser(localUser)
                 .setPath("/medication/trait/" + id)
                 .setRequestListener((code, result) -> {
                     MedicationTraitByIdResponse response;
