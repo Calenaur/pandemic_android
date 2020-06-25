@@ -15,12 +15,17 @@ import android.widget.LinearLayout;
 
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
+import com.calenaur.pandemic.api.model.medication.Medication;
 
 public class MedicineFragment extends Fragment {
 
     private SharedGameDataViewModel balanceViewModel;
 
+    private LinearLayout medicineFragment;
     private LinearLayout container;
+
+    private static final Medication[] medications = {new Medication(1,"paper", 2), new Medication(2,"pil", 5)};
+
 
     @Nullable
     @Override
@@ -30,10 +35,17 @@ public class MedicineFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        medicineFragment = view.findViewById(R.id.medicineFragment);
         container = new LinearLayout(getContext());
 
+        for(Medication medication: medications){
+            
 
-        container.addView();
+            container.addView();
+        }
+
+
+        medicineFragment.addView(container);
         super.onViewCreated(view, savedInstanceState);
     }
 
