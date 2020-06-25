@@ -12,14 +12,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
+import com.calenaur.pandemic.api.API;
+import com.calenaur.pandemic.api.model.medication.Medication;
+import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.api.net.response.ErrorCode;
+import com.calenaur.pandemic.api.store.PromiseHandler;
 import com.tomer.fadingtextview.FadingTextView;
+
+import java.util.Arrays;
 
 public class ProductionFragment extends Fragment {
 
     private static final String balanceText = "$ :";
     private static final String[] fadetests = {"wow", "damn dude", "amazing", "good job"};
 
-    private SharedGameDataViewModel balanceViewModel;
+    private SharedGameDataViewModel sharedGameDataViewModel;
 
     private ImageView generator;
     private TextView counter;
@@ -40,7 +47,7 @@ public class ProductionFragment extends Fragment {
         counter.setText(balanceText+ 0);
         collectionIndicator.setTexts(fadetests);
         generator.setOnClickListener((v) -> {
-            balanceViewModel.incrementBalance();
+            sharedGameDataViewModel.incrementBalance();
         });
     }
 
@@ -48,9 +55,26 @@ public class ProductionFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        balanceViewModel = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
-        balanceViewModel.getBalance().observe(getViewLifecycleOwner(), balance -> {
-            counter.setText(balanceText + balanceViewModel.getAppendix());
+        sharedGameDataViewModel = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
+        sharedGameDataViewModel.getBalance().observe(getViewLifecycleOwner(), balance -> {
+            counter.setText(balanceText + sharedGameDataViewModel.getAppendix());
+        });
+        refresh();
+    }
+
+    public void refresh() {
+        LocalUser localUser = sharedGameDataViewModel.getLocalUser();
+        API api = sharedGameDataViewModel.getApi();
+        api.getMedicineStore().medications(localUser, new PromiseHandler<Medication[]>() {
+            @Override
+            public void onDone(Medication[] object) {
+                System.out.println(Arrays.toString(object));
+            }
+
+            @Override
+            public void onError(ErrorCode errorCode) {
+                System.out.println(errorCode);
+            }
         });
     }
 }

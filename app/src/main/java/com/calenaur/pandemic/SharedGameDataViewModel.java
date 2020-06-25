@@ -6,9 +6,15 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.calenaur.pandemic.api.API;
 import com.calenaur.pandemic.api.model.medication.Medication;
+import com.calenaur.pandemic.api.model.user.LocalUser;
 
 public class SharedGameDataViewModel extends ViewModel {
+
+    private  MutableLiveData<API> api = new MutableLiveData<>();
+    private  MutableLiveData<LocalUser> localUser = new MutableLiveData<>();
+
     private MutableLiveData<Long> balance = new MutableLiveData<>();
     private MutableLiveData<Medication> medication = new MutableLiveData<>();
 
@@ -27,6 +33,22 @@ public class SharedGameDataViewModel extends ViewModel {
             return worth;
         }
         return -1;
+    }
+
+    public void setApi(API api) {
+        this.api.setValue(api);
+    }
+
+    public API getApi() {
+        return api.getValue();
+    }
+
+    public void setLocalUser(LocalUser localUser) {
+        this.localUser.setValue(localUser);
+    }
+
+    public LocalUser getLocalUser() {
+        return localUser.getValue();
     }
 
     /*

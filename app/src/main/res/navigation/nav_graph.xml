@@ -9,7 +9,11 @@
         android:id="@+id/productionFragment"
         android:name="com.calenaur.pandemic.fragment.ProductionFragment"
         android:label="@string/production"
-        tools:layout="@layout/fragment_production" />
+        tools:layout="@layout/fragment_production" >
+        <argument
+        android:name="local_user"
+        app:argType="com.calenaur.pandemic.api.model.user.LocalUser" />
+    </fragment>
 
     <fragment
         android:id="@+id/accountFragment"

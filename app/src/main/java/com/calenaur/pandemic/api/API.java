@@ -16,6 +16,7 @@ public class API {
         this.context = context;
         this.httpClient = new HTTPClient("https://api.calenaur.com", context);
         this.userStore = new UserStore(httpClient);
+        this.medicineStore = new MedicineStore(httpClient);
     }
 
     public UserStore getUserStore() {
