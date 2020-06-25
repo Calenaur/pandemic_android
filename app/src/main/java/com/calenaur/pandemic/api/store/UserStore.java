@@ -3,12 +3,15 @@ package com.calenaur.pandemic.api.store;
 import com.android.volley.Request;
 import com.calenaur.pandemic.api.model.user.JWT.JSONWebToken;
 import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.api.model.user.UserMedication;
 import com.calenaur.pandemic.api.net.HTTPClient;
 import com.calenaur.pandemic.api.net.HTTPStatusCode;
 import com.calenaur.pandemic.api.net.PandemicRequest;
 import com.calenaur.pandemic.api.net.response.DefaultResponse;
 import com.calenaur.pandemic.api.net.response.ErrorCode;
-import com.calenaur.pandemic.api.net.response.LoginResponse;
+import com.calenaur.pandemic.api.net.response.user.LoginResponse;
+import com.calenaur.pandemic.api.net.response.user.UserMedicationByIdResponse;
+import com.calenaur.pandemic.api.net.response.user.UserMedicationResponse;
 import com.fasterxml.jackson.jr.ob.JSON;
 import java.io.IOException;
 import java.util.HashMap;
@@ -86,17 +89,20 @@ public class UserStore {
                 .setMethod(Request.Method.GET)
                 .setPath("/medication")
                 .setRequestListener((code, result) -> {
-                    if (code == HTTPStatusCode.OK) {
-                        promiseHandler.onDone(null);
+                    UserMedicationResponse response;
+                    try {
+                        response = JSON.std.beanFrom(UserMedicationResponse.class, result);
+                    } catch (IOException ignored) {
+                        promiseHandler.onError(ErrorCode.fromResponse(null));
                         return;
                     }
 
-                    try {
-                        DefaultResponse response = JSON.std.beanFrom(DefaultResponse.class, result);
-                        promiseHandler.onError(ErrorCode.fromResponse(response));
-                    } catch (IOException ignored) {
-                        promiseHandler.onError(ErrorCode.fromResponse(null));
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(response.userMedications);
+                        return;
                     }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(response));
                 }).create();
 
         httpClient.queue(request);
@@ -107,17 +113,20 @@ public class UserStore {
                 .setMethod(Request.Method.GET)
                 .setPath("/medication/"+id)
                 .setRequestListener((code, result) -> {
-                    if (code == HTTPStatusCode.OK) {
-                        promiseHandler.onDone(null);
+                    UserMedicationByIdResponse response;
+                    try {
+                        response = JSON.std.beanFrom(UserMedicationByIdResponse.class, result);
+                    } catch (IOException ignored) {
+                        promiseHandler.onError(ErrorCode.fromResponse(null));
                         return;
                     }
 
-                    try {
-                        DefaultResponse response = JSON.std.beanFrom(DefaultResponse.class, result);
-                        promiseHandler.onError(ErrorCode.fromResponse(response));
-                    } catch (IOException ignored) {
-                        promiseHandler.onError(ErrorCode.fromResponse(null));
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(response.userMedication);
+                        return;
                     }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(response));
                 }).create();
 
         httpClient.queue(request);
