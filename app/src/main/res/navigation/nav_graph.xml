@@ -13,6 +13,14 @@
         <argument
         android:name="local_user"
         app:argType="com.calenaur.pandemic.api.model.user.LocalUser" />
+
+        <action
+            android:id="@+id/action_productionFragment_to_accountFragment"
+            app:destination="@id/accountFragment" />
+            
+        <action
+            android:id="@+id/action_productionFragment_to_researchFragment"
+            app:destination="@id/researchFragment" />
     </fragment>
 
     <fragment
@@ -24,4 +32,10 @@
             android:name="local_user"
             app:argType="com.calenaur.pandemic.api.model.user.LocalUser" />
     </fragment>
+
+    <fragment
+        android:id="@+id/researchFragment"
+        android:name="com.calenaur.pandemic.fragment.ResearchFragment"
+        android:label="@string/research"
+        tools:layout="@layout/fragment_research" />
 </navigation>
