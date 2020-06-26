@@ -1,6 +1,8 @@
 package com.calenaur.pandemic.api.model.medication;
 
-public class MedicationTrait {
+import com.calenaur.pandemic.api.model.Tier;
+
+public class MedicationTrait extends Tier.Tiered {
 
     public int id;
     public int tier;
@@ -17,5 +19,10 @@ public class MedicationTrait {
 
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public Tier getTier() {
+        return getTier(tier);
     }
 }

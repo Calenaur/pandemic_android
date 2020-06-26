@@ -39,6 +39,10 @@ public class User implements Serializable {
         return balance;
     }
 
+    public Tier getTier() {
+        return tier;
+    }
+
     public boolean pay(int amount) {
         if (getBalance() >= amount) {
             balance -= amount;

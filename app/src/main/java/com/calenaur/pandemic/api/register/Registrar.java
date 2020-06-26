@@ -76,12 +76,14 @@ public class Registrar {
 
     public void updateTierRegistry(API api, LocalUser localUser) {
         //TODO replace with API call
+        /*
         tierRegistry.clear();
         tierRegistry.register(1, new Tier(1, "Common", ""));
         tierRegistry.register(2, new Tier(2, "Uncommon", ""));
         tierRegistry.register(3, new Tier(3, "Rare", ""));
         tierRegistry.register(4, new Tier(4, "Epic", ""));
         tierRegistry.register(5, new Tier(5, "Legendary", ""));
+         */
     }
 
     public Registry<Tier> getTierRegistry() {

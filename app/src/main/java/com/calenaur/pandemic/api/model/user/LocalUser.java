@@ -21,6 +21,6 @@ public class LocalUser extends User implements Serializable {
 
     public static LocalUser fromToken(JSONWebToken jwt) {
         Payload p = jwt.getPayload();
-        return new LocalUser(p.sub, p.name, p.access, 0, new Tier(1, "Common", ""), jwt);
+        return new LocalUser(p.sub, p.name, p.access, 0, Tier.COMMON, jwt);
     }
 }

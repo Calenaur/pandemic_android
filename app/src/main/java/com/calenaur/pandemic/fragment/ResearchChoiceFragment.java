@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -15,18 +16,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.calenaur.pandemic.R;
+import com.calenaur.pandemic.SharedGameDataViewModel;
 import com.calenaur.pandemic.api.model.medication.Medication;
 import com.calenaur.pandemic.api.model.medication.MedicationTrait;
+import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.view.MedicineCardView;
+
+import org.w3c.dom.Text;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class ResearchChoiceFragment extends Fragment {
 
     private static final int RESEARCH_TIME_SECONDS = 5;
 
+    private SharedGameDataViewModel data;
     private LinearLayout researchCandidates;
 
     @Override
@@ -35,9 +45,46 @@ public class ResearchChoiceFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        View loader = view.findViewById(R.id.loader);
+        data = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
         researchCandidates = view.findViewById(R.id.research_candidates);
-        new LoadTask(getActivity()).execute(loader);
+        View loader = view.findViewById(R.id.loader);
+        View content = view.findViewById(R.id.content);
+        new LoadTask(getActivity()).execute(loader, content);
+
+        for (int i=0; i<3; i++) {
+            generateCandidate();
+        }
+    }
+
+    private void generateCandidate() {
+        LocalUser localUser = data.getLocalUser();
+        Medication[] medications = data.getRegistrar().getMedicationRegistry().toArray(new Medication[]{});
+        MedicationTrait[] traits = data.getRegistrar().getMedicationTraitRegistry().toArray(new MedicationTrait[]{});
+        ArrayList<Medication> candidates = new ArrayList<>();
+
+        for (Medication medication : medications) {
+            if (-1 > localUser.getTier().getID())
+                continue;
+
+            candidates.add(medication);
+        }
+
+        Random random = new Random();
+        Medication candidate = candidates.get(random.nextInt(candidates.size()));
+
+        ArrayList<MedicationTrait> candidateTraits = new ArrayList<>();
+        if (candidate.maximum_traits > 0)
+            for (MedicationTrait trait : traits) {
+                if (candidateTraits.size() >= candidate.maximum_traits)
+                    break;
+
+                if (random.nextFloat() < 0.5f)
+                    continue;
+
+                candidateTraits.add(trait);
+            }
+
+        appendResearchCandidate(candidate, candidateTraits.toArray(new MedicationTrait[]{}));
     }
 
     private void appendResearchCandidate(Medication medication, MedicationTrait[] traits) {
@@ -47,15 +94,14 @@ public class ResearchChoiceFragment extends Fragment {
         if (getActivity().getApplicationContext() == null)
             return;
 
-        TypedValue background = new TypedValue();
-        getActivity().getTheme().resolveAttribute(android.R.attr.selectableItemBackground, background, true);
+        MedicineCardView.LayoutParams layoutParams = new MedicineCardView.LayoutParams(MedicineCardView.LayoutParams.MATCH_PARENT, MedicineCardView.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(10, 10, 10, 10);
 
-        CardView card = new CardView(getActivity().getApplicationContext());
+        MedicineCardView card = new MedicineCardView(getActivity(), medication, traits);
         card.setClickable(true);
         card.setOnClickListener(this::onCandidateSelect);
-        card.setMaxCardElevation(1f);
-        card.setForeground(getResources().getDrawable(background.resourceId, getActivity().getTheme()));
-        card.set
+        card.setLayoutParams(layoutParams);
+        researchCandidates.addView(card);
     }
 
     private void onCandidateSelect(View view) {
@@ -76,13 +122,15 @@ public class ResearchChoiceFragment extends Fragment {
                 return null;
             }
 
-            if (views.length < 1) {
+            if (views.length < 2) {
                 return null;
             }
 
             View view = views[0];
+            View content = views[1];
 
             activity.runOnUiThread(() -> {
+                content.setVisibility(View.GONE);
                 AlphaAnimation inAnimation = new AlphaAnimation(0f, 1f);
                 inAnimation.setDuration(200);
                 view.setAnimation(inAnimation);
@@ -102,6 +150,7 @@ public class ResearchChoiceFragment extends Fragment {
                 outAnimation.setDuration(200);
                 view.setAnimation(outAnimation);
                 view.setVisibility(View.GONE);
+                content.setVisibility(View.VISIBLE);
             });
             return null;
         }

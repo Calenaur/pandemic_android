@@ -10,9 +10,14 @@
         android:name="com.calenaur.pandemic.fragment.ProductionFragment"
         android:label="@string/production"
         tools:layout="@layout/fragment_production" >
+        <argument
+            android:name="local_user"
+            app:argType="com.calenaur.pandemic.api.model.user.LocalUser" />
+
         <action
             android:id="@+id/action_productionFragment_to_accountFragment"
             app:destination="@id/accountFragment" />
+
         <action
             android:id="@+id/action_productionFragment_to_researchFragment"
             app:destination="@id/researchFragment" />
@@ -32,5 +37,14 @@
         android:id="@+id/researchFragment"
         android:name="com.calenaur.pandemic.fragment.ResearchFragment"
         android:label="@string/research"
-        tools:layout="@layout/fragment_research" />
+        tools:layout="@layout/fragment_research" >
+        <action
+            android:id="@+id/action_researchFragment_to_researchChoiceFragment"
+            app:destination="@id/researchChoiceFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/researchChoiceFragment"
+        android:name="com.calenaur.pandemic.fragment.ResearchChoiceFragment"
+        android:label="@string/research_options"
+        tools:layout="@layout/fragment_research_choice" />
 </navigation>

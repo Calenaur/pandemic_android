@@ -22,4 +22,7 @@ public class Registry<T> {
         return register.get(id);
     }
 
+    public T[] toArray(T[] a) {
+        return register.values().toArray(a);
+    }
 }
