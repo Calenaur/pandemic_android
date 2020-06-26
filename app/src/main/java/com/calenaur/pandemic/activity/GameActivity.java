@@ -15,7 +15,9 @@ import android.view.MenuItem;
 
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
+import com.calenaur.pandemic.api.API;
 import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.api.register.Registrar;
 import com.calenaur.pandemic.app.PandemicApplication;
 import com.calenaur.pandemic.navigation.NavigationUtils;
 import com.google.android.material.navigation.NavigationView;
@@ -32,12 +34,16 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-
         if (getIntent().hasExtra("local_user")) {
             localUser = (LocalUser) getIntent().getSerializableExtra("local_user");
+            API api = ((PandemicApplication)getApplication()).getAPI();
+            Registrar registrar = new Registrar();
+            registrar.updateAll(api, localUser);
+
             SharedGameDataViewModel viewModel = ViewModelProviders.of(this).get(SharedGameDataViewModel.class);
             viewModel.setLocalUser(localUser);
-            viewModel.setApi(((PandemicApplication)getApplication()).getAPI());
+            viewModel.setApi(api);
+            viewModel.setRegistrar(registrar);
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);

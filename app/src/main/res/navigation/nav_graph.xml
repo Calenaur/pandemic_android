@@ -37,5 +37,14 @@
         android:id="@+id/researchFragment"
         android:name="com.calenaur.pandemic.fragment.ResearchFragment"
         android:label="@string/research"
-        tools:layout="@layout/fragment_research" />
+        tools:layout="@layout/fragment_research" >
+        <action
+            android:id="@+id/action_researchFragment_to_researchChoiceFragment"
+            app:destination="@id/researchChoiceFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/researchChoiceFragment"
+        android:name="com.calenaur.pandemic.fragment.ResearchChoiceFragment"
+        android:label="@string/research_options"
+        tools:layout="@layout/fragment_research_choice" />
 </navigation>

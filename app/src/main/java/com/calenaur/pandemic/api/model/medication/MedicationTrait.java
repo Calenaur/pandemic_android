@@ -1,13 +1,21 @@
 package com.calenaur.pandemic.api.model.medication;
 
-import com.calenaur.pandemic.api.model.Tier;
-
 public class MedicationTrait {
 
-    private int id;
-    private Tier tier;
-    private String name;
-    private String description;
-    private int rarity;
+    public int id;
+    public int tier;
+    public String name;
+    public String description;
 
+    public int getID() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

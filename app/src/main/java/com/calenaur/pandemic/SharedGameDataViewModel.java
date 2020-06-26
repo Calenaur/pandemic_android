@@ -9,12 +9,15 @@ import androidx.lifecycle.ViewModel;
 import com.calenaur.pandemic.api.API;
 import com.calenaur.pandemic.api.model.medication.Medication;
 import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.api.register.Registrar;
 
 public class SharedGameDataViewModel extends ViewModel {
 
-    private  MutableLiveData<API> api = new MutableLiveData<>();
-    private  MutableLiveData<LocalUser> localUser = new MutableLiveData<>();
+    public static final int BASE_RESEARCH_COST = 500;
 
+    private MutableLiveData<Registrar> registrar = new MutableLiveData<>();
+    private MutableLiveData<API> api = new MutableLiveData<>();
+    private MutableLiveData<LocalUser> localUser = new MutableLiveData<>();
     private MutableLiveData<Long> balance = new MutableLiveData<>();
     private MutableLiveData<Medication> medication = new MutableLiveData<>();
 
@@ -67,6 +70,14 @@ public class SharedGameDataViewModel extends ViewModel {
     public void setMedication(MutableLiveData<Medication> medications) { this.medication = medications; }
     public MutableLiveData<Medication> getMedication() {
         return medication;
+    }
+
+    public Registrar getRegistrar() {
+        return registrar.getValue();
+    }
+
+    public void setRegistrar(Registrar registrar) {
+        this.registrar.setValue(registrar);
     }
 
     /*

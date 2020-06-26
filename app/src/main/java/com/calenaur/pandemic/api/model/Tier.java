@@ -1,9 +1,17 @@
 package com.calenaur.pandemic.api.model;
 
-public class Tier {
+import java.io.Serializable;
 
-    private int id;
+public class Tier implements Serializable {
+
+    public int id;
     public String name;
     public String color;
+
+    public Tier(int id, String name, String color) {
+        this.id = id;
+        this.name = name;
+        this.color = color;
+    }
 
 }
