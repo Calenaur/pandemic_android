@@ -54,7 +54,7 @@ public class ResearchFragment extends Fragment {
     }
 
     public void onResearchNew(DialogInterface dialog, int which) {
-        if (data.getRawLocalUser().pay(SharedGameDataViewModel.BASE_RESEARCH_COST)) {
+        if (data.getLocalUser().pay(SharedGameDataViewModel.BASE_RESEARCH_COST)) {
             dialog.dismiss();
             Navigation.findNavController(fab).navigate(R.id.researchChoiceFragment);
             return;

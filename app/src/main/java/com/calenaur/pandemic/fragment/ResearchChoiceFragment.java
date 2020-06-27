@@ -52,9 +52,9 @@ public class ResearchChoiceFragment extends Fragment {
     }
 
     private void generateCandidate() {
-        LocalUser localUser = data.getRawLocalUser();
-        Medication[] medications = data.getRawRegistrar().getMedicationRegistry().toArray(new Medication[]{});
-        MedicationTrait[] traits = data.getRawRegistrar().getMedicationTraitRegistry().toArray(new MedicationTrait[]{});
+        LocalUser localUser = data.getLocalUser();
+        Medication[] medications = data.getRegistrar().getMedicationRegistry().toArray(new Medication[]{});
+        MedicationTrait[] traits = data.getRegistrar().getMedicationTraitRegistry().toArray(new MedicationTrait[]{});
         ArrayList<Medication> candidates = new ArrayList<>();
 
         for (Medication medication : medications) {

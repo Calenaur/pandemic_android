@@ -11,13 +11,17 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
 import com.calenaur.pandemic.api.API;
 import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.api.model.user.UserMedication;
+import com.calenaur.pandemic.api.net.response.ErrorCode;
 import com.calenaur.pandemic.api.register.Registrar;
+import com.calenaur.pandemic.api.store.PromiseHandler;
 import com.calenaur.pandemic.app.PandemicApplication;
 import com.calenaur.pandemic.navigation.NavigationUtils;
 import com.google.android.material.navigation.NavigationView;
@@ -39,11 +43,22 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             API api = ((PandemicApplication)getApplication()).getAPI();
             Registrar registrar = new Registrar();
             registrar.updateAll(api, localUser);
+            SharedGameDataViewModel sharedGameDataViewModel = ViewModelProviders.of(this).get(SharedGameDataViewModel.class);
+            sharedGameDataViewModel.setLocalUser(localUser);
+            sharedGameDataViewModel.setApi(api);
+            sharedGameDataViewModel.setRegistrar(registrar);
 
-            SharedGameDataViewModel viewModel = ViewModelProviders.of(this).get(SharedGameDataViewModel.class);
-            viewModel.setLocalUser(localUser);
-            viewModel.setApi(api);
-            viewModel.setRegistrar(registrar);
+            api.getUserStore().userMedications(localUser, new PromiseHandler<UserMedication[]>() {
+                @Override
+                public void onDone(UserMedication[] object) {
+                    sharedGameDataViewModel.setMedications(object);
+                }
+
+                @Override
+                public void onError(ErrorCode errorCode) {
+                    Log.e("TAG", "onError: "+errorCode);
+                }
+            });
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);

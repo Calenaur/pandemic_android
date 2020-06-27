@@ -6,89 +6,86 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.calenaur.pandemic.api.API;
+import com.calenaur.pandemic.api.model.Tier;
+import com.calenaur.pandemic.api.model.medication.Medication;
+import com.calenaur.pandemic.api.model.medication.MedicationTrait;
 import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.model.user.UserMedication;
 import com.calenaur.pandemic.api.register.Registrar;
 
-import java.util.Objects;
+import java.util.ArrayList;
 
 public class SharedGameDataViewModel extends ViewModel {
 
     public static final int BASE_RESEARCH_COST = 500;
 
-    private MutableLiveData<Registrar> registrar = new MutableLiveData<>();
-    private MutableLiveData<API> api = new MutableLiveData<>();
+    private Registrar registrar;
+    private API api;
 
-    private MutableLiveData<LocalUser> localUser = new MutableLiveData<>();
+    private LocalUser localUser;
 
-    private MutableLiveData<UserMedication> medication = new MutableLiveData<>();
+    private int currentMedicationIndex = 0;
+    private UserMedication[] medications = new UserMedication[]{new UserMedication(1, new Medication(1, "Placebo", "Suger Caputuale", 1, 0, 0, 0, Tier.COMMON), new MedicationTrait[]{})};
+
     private MutableLiveData<Long> balance = new MutableLiveData<>();
 
     //API Getters/Setters
     public void setApi(API api) {
-        this.api.setValue(api);
+        this.api = api;
     }
-    public API getRawApi() {
-        return api.getValue();
-    }
-    public MutableLiveData<API> getApi() {
+    public API getApi() {
         return api;
     }
 
     //LocalUser Getters/Setters
     public void setLocalUser(LocalUser localUser) {
-        this.localUser.setValue(localUser);
+        this.localUser = localUser;
     }
-    public LocalUser getRawLocalUser() {
-        return localUser.getValue();
-    }
-    public MutableLiveData<LocalUser> getLocalUser() {
+    public LocalUser getLocalUser() {
         return localUser;
     }
 
-    /*
-    * Medication getter ans setter.
-    * */
-    public void setMedication(UserMedication medication) { this.medication.setValue(medication); }
+    //CurrentMedicationIndex getter ans setter.
+    public void setCurrentMedicationIndex(int medicationIndex) { this.currentMedicationIndex = medicationIndex; }
+    public int getCurrentMedicationIndex() { return currentMedicationIndex; }
 
-    public UserMedication getRawMedication() {
-        return medication.getValue();
-    }
-
-    public MutableLiveData<UserMedication> getMedication() {
-        return medication;
+    public UserMedication getCurrentMedication(){
+        return medications[currentMedicationIndex];
     }
 
-    public Registrar getRawRegistrar() {
-        return registrar.getValue();
-    }
-    public void setRegistrar(Registrar registrar) {
-        this.registrar.setValue(registrar);
+    //Medications getter ans setter.
+    public void setMedications(UserMedication[] medications) { this.medications = medications; }
+    public UserMedication[] getMedications() { return medications; }
+    public void addMedication(UserMedication userMedication){
+        UserMedication[] temp = new UserMedication[medications.length + 1];
+        System.arraycopy(medications, 0, temp, 0, medications.length);
+        System.arraycopy(new UserMedication[]{userMedication}, 0,temp,medications.length,1);
+        medications = temp;
     }
 
-    public MutableLiveData<Registrar> getRegistrar() {
-        return registrar;
-    }
+    //Registrar Getters and Setters
+    public Registrar getRegistrar() { return registrar; }
+    public void setRegistrar(Registrar registrar) { this.registrar = registrar; }
 
-    public MutableLiveData<Long> getBalance() {
-        return balance;
-    }
+    //Balance Getter and Setter
+    public MutableLiveData<Long> getBalance() { return balance; }
 
     public void incrementBalance(){
-        LocalUser lou = localUser.getValue();
-        if(balance.getValue() == null && lou != null){
-            balance.setValue(lou.getBalance());
+        if(balance.getValue() == null && localUser != null){
+            balance.setValue(localUser.getBalance());
         }
-        if(lou != null && medication.getValue() != null){
-            int incrementValue = medication.getValue().medication.base_value;
-            lou.incrementBalance(incrementValue);
+        UserMedication currentMedication = medications[currentMedicationIndex];
+        if(localUser != null &&  currentMedication != null){
+            int incrementValue = currentMedication.medication.base_value;
+            localUser.incrementBalance(incrementValue);
             balance.setValue(balance.getValue() + incrementValue);
         }
     }
 
     public String getBalanceAppendix() {
-        return getAppendix(Objects.requireNonNull(localUser.getValue()).getBalance());
+        return getAppendix(localUser.getBalance());
     }
+
     /*
     * Generate the appendixes for balance depending on its cardinal number.
     * */

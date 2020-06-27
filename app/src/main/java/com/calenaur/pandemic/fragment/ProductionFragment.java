@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,7 +16,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
-import com.calenaur.pandemic.api.model.user.UserMedication;
 
 public class ProductionFragment extends Fragment {
 
@@ -45,9 +43,6 @@ public class ProductionFragment extends Fragment {
             if (e.getAction() != MotionEvent.ACTION_UP){
                 return true;
             }
-            if(sharedGameDataViewModel.getRawMedication() == null){
-                sharedGameDataViewModel.setMedication(new UserMedication(1, sharedGameDataViewModel.getRawRegistrar().getMedicationRegistry().get(1), null));
-            }
             sharedGameDataViewModel.incrementBalance();
             TextView indicator = new TextView(getContext());
 
@@ -58,7 +53,7 @@ public class ProductionFragment extends Fragment {
 
                 @Override
                 public void onAnimationStart(Animation animation) {
-                    indicator.setText("+"+sharedGameDataViewModel.getRawMedication().medication.base_value);
+                    indicator.setText("+"+sharedGameDataViewModel.getCurrentMedication().medication.base_value);
                 }
 
                 @Override
@@ -85,7 +80,7 @@ public class ProductionFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         sharedGameDataViewModel = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
-        counter.setText(balanceText + sharedGameDataViewModel.getRawLocalUser().getBalance());
+        counter.setText(balanceText + sharedGameDataViewModel.getLocalUser().getBalance());
         sharedGameDataViewModel.getBalance().observe(getViewLifecycleOwner(), user -> {
             counter.setText(balanceText + sharedGameDataViewModel.getBalanceAppendix());
         });
