@@ -46,6 +46,6 @@ public class Medication extends Tier.Tiered {
 
     @Override
     public Tier getTier() {
-        return null;
+        return innerTier;
     }
 }

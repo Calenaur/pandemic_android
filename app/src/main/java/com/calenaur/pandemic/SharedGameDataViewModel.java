@@ -25,7 +25,7 @@ public class SharedGameDataViewModel extends ViewModel {
     private LocalUser localUser;
 
     private int currentMedicationIndex = 0;
-    private UserMedication[] medications = new UserMedication[]{new UserMedication(1, new Medication(1, "Placebo", "Suger Caputuale", 1, 0, 0, 0, Tier.COMMON), new MedicationTrait[]{})};
+    private UserMedication[] medications = new UserMedication[]{new UserMedication(1, new Medication(1, "Placebo", "Suger Caputuale", 1, 0, 0, 1, Tier.COMMON), new MedicationTrait[]{})};
 
     private MutableLiveData<Long> balance = new MutableLiveData<>();
 
