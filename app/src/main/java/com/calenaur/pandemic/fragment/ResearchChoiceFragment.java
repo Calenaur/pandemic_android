@@ -6,17 +6,14 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
@@ -24,8 +21,6 @@ import com.calenaur.pandemic.api.model.medication.Medication;
 import com.calenaur.pandemic.api.model.medication.MedicationTrait;
 import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.view.MedicineCardView;
-
-import org.w3c.dom.Text;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -57,9 +52,9 @@ public class ResearchChoiceFragment extends Fragment {
     }
 
     private void generateCandidate() {
-        LocalUser localUser = data.getLocalUser();
-        Medication[] medications = data.getRegistrar().getMedicationRegistry().toArray(new Medication[]{});
-        MedicationTrait[] traits = data.getRegistrar().getMedicationTraitRegistry().toArray(new MedicationTrait[]{});
+        LocalUser localUser = data.getRawLocalUser();
+        Medication[] medications = data.getRawRegistrar().getMedicationRegistry().toArray(new Medication[]{});
+        MedicationTrait[] traits = data.getRawRegistrar().getMedicationTraitRegistry().toArray(new MedicationTrait[]{});
         ArrayList<Medication> candidates = new ArrayList<>();
 
         for (Medication medication : medications) {

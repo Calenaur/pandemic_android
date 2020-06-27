@@ -2,14 +2,16 @@ package com.calenaur.pandemic;
 
 import android.annotation.SuppressLint;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.calenaur.pandemic.api.API;
 import com.calenaur.pandemic.api.model.medication.Medication;
 import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.api.model.user.UserMedication;
 import com.calenaur.pandemic.api.register.Registrar;
+
+import java.util.Objects;
 
 public class SharedGameDataViewModel extends ViewModel {
 
@@ -17,88 +19,91 @@ public class SharedGameDataViewModel extends ViewModel {
 
     private MutableLiveData<Registrar> registrar = new MutableLiveData<>();
     private MutableLiveData<API> api = new MutableLiveData<>();
+
     private MutableLiveData<LocalUser> localUser = new MutableLiveData<>();
+
+    private MutableLiveData<UserMedication> medication = new MutableLiveData<>();
     private MutableLiveData<Long> balance = new MutableLiveData<>();
-    private MutableLiveData<Medication> medication = new MutableLiveData<>();
 
-    /*
-    * Instantiates the value of balance if null.
-    * Increment the balance variable using the value of the medication.
-    * */
-    public void incrementBalance(){
-        if(balance.getValue() == null){
-            balance.setValue(0L);
-        }if(medication.getValue() == null){
-            medication.setValue(new Medication(1, "Pain Killer", 10));
-        }else{
-            balance.setValue(balance.getValue() +  medication.getValue().getWorth());
-        }
-    }
-
+    //API Getters/Setters
     public void setApi(API api) {
         this.api.setValue(api);
     }
 
-    public API getApi() {
+    public API getRawApi() {
         return api.getValue();
     }
 
+    public MutableLiveData<API> getApi() {
+        return api;
+    }
+
+    //LocalUser Getters/Setters
     public void setLocalUser(LocalUser localUser) {
         this.localUser.setValue(localUser);
     }
 
-    public LocalUser getLocalUser() {
+    public LocalUser getRawLocalUser() {
         return localUser.getValue();
     }
 
-    /*
-    * Balance getter and setter.
-    * */
-    public void setBalance(Long input){
-        balance.setValue(input);
-    }
-    public LiveData<Long> getBalance(){
-        return balance;
+    public MutableLiveData<LocalUser> getLocalUser() {
+        return localUser;
     }
 
     /*
     * Medication getter ans setter.
     * */
-    public void setMedication(MutableLiveData<Medication> medications) { this.medication = medications; }
-    public MutableLiveData<Medication> getMedication() {
+    public void setMedication(UserMedication medication) { this.medication.setValue(medication); }
+
+    public UserMedication getRawMedication() {
+        return medication.getValue();
+    }
+
+    public MutableLiveData<UserMedication> getMedication() {
         return medication;
     }
-    public int getWorth(){
-        Medication med = medication.getValue();
-        if (med == null){
-            return 0;
-        }
-        else{
-            return med.getWorth();
-        }
-    }
 
-    public Registrar getRegistrar() {
+    public Registrar getRawRegistrar() {
         return registrar.getValue();
     }
-
     public void setRegistrar(Registrar registrar) {
         this.registrar.setValue(registrar);
     }
 
+    public MutableLiveData<Registrar> getRegistrar() {
+        return registrar;
+    }
+
+    public MutableLiveData<Long> getBalance() {
+        return balance;
+    }
+
+    public void incrementBalance(){
+        LocalUser lou = localUser.getValue();
+        if(balance.getValue() == null && lou != null){
+            balance.setValue(lou.getBalance());
+        }
+        if(lou != null && medication.getValue() != null){
+            int incrementValue = medication.getValue().medication.base_value;
+            lou.incrementBalance(incrementValue);
+            balance.setValue(balance.getValue() + incrementValue);
+        }
+    }
+
+    public String getBalanceAppendix(){
+        System.out.println("increment");
+        return getAppendix(Objects.requireNonNull(localUser.getValue()).getBalance());
+    }
     /*
     * Generate the appendixes for balance depending on its cardinal number.
     * */
     @SuppressLint("DefaultLocale")
-    public String getAppendix(){
-        if (balance.getValue() == null){
-            return "0";
-        }
+    public String getAppendix(long value){
         String[] appendixes = {"k","m","b","t","q","Q","v"};
-        Long value = balance.getValue();
 
         if ( value < Math.pow(10,3)){
-            return value.toString();
+            return ""+value;
         }else{
             for(int i = 1; i < appendixes.length; i++) {
                 if (value >= Math.pow(10, i*3) && value < Math.pow(10, (i+1)*3)) {

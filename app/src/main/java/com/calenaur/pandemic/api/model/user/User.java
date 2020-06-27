@@ -10,7 +10,7 @@ public class User implements Serializable {
     private String uid;
     private String username;
     private int accessLevel;
-    private int balance;
+    private long balance;
     private Manufacture manufacture;
     private Tier tier;
 
@@ -35,9 +35,10 @@ public class User implements Serializable {
         return accessLevel;
     }
 
-    public int getBalance() {
+    public long getBalance() {
         return balance;
     }
+
 
     public Tier getTier() {
         return tier;
@@ -49,5 +50,13 @@ public class User implements Serializable {
             return true;
         }
         return false;
+    }
+
+    public void setBalance(long balance) {
+        this.balance = balance;
+    }
+
+    public void incrementBalance(long value){
+        balance += value;
     }
 }

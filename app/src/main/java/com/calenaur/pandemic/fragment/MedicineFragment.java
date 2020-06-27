@@ -12,20 +12,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
 import com.calenaur.pandemic.api.model.medication.Medication;
+import com.calenaur.pandemic.api.net.response.ErrorCode;
+import com.calenaur.pandemic.api.store.PromiseHandler;
 
 public class MedicineFragment extends Fragment {
 
-    private SharedGameDataViewModel balanceViewModel;
+    private SharedGameDataViewModel sharedGameDataViewModel;
 
     private LinearLayout medicineFragment;
     private LinearLayout container;
-
-    private static final Medication[] medications = {new Medication(1,"paper", 2), new Medication(2,"pil", 5)};
-
 
     @Nullable
     @Override
@@ -37,15 +37,6 @@ public class MedicineFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         medicineFragment = view.findViewById(R.id.medicineFragment);
         container = new LinearLayout(getContext());
-
-        for(Medication medication: medications){
-            
-
-            container.addView();
-        }
-
-
-        medicineFragment.addView(container);
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -53,6 +44,23 @@ public class MedicineFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        balanceViewModel = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
+        sharedGameDataViewModel = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
+
+        sharedGameDataViewModel.getRawApi().getMedicineStore().medications(sharedGameDataViewModel.getRawLocalUser(), new PromiseHandler<Medication[]>() {
+            @Override
+            public void onDone(Medication[] object) {
+                for(Medication medication: object){
+                    TextView textView = new TextView(getContext());
+                    textView.setText(medication.toString());
+                    container.addView(textView);
+                }
+                medicineFragment.addView(container);
+            }
+
+            @Override
+            public void onError(ErrorCode errorCode) {
+
+            }
+        });
     }
 }

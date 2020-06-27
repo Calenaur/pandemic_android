@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProviders;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,13 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
-import com.calenaur.pandemic.api.API;
-import com.calenaur.pandemic.api.model.medication.Medication;
-import com.calenaur.pandemic.api.model.user.LocalUser;
-import com.calenaur.pandemic.api.net.response.ErrorCode;
-import com.calenaur.pandemic.api.store.PromiseHandler;
+import com.calenaur.pandemic.api.model.user.UserMedication;
 
-import java.util.Arrays;
 
 public class ProductionFragment extends Fragment {
 
@@ -46,10 +42,12 @@ public class ProductionFragment extends Fragment {
         generator = view.findViewById(R.id.generator);
         counter = view.findViewById(R.id.counter);
         clickContainer = view.findViewById(R.id.clickContainer);
-        counter.setText(balanceText+ 0);
         generator.setOnTouchListener((v, e) -> {
             if (e.getAction() != MotionEvent.ACTION_UP){
                 return true;
+            }
+            if(sharedGameDataViewModel.getRawMedication() == null){
+                sharedGameDataViewModel.setMedication(new UserMedication(1, sharedGameDataViewModel.getRawRegistrar().getMedicationRegistry().get(1), null));
             }
             sharedGameDataViewModel.incrementBalance();
             TextView indicator = new TextView(getContext());
@@ -61,7 +59,7 @@ public class ProductionFragment extends Fragment {
 
                 @Override
                 public void onAnimationStart(Animation animation) {
-                    indicator.setText("+"+sharedGameDataViewModel.getWorth());
+                    indicator.setText("+"+sharedGameDataViewModel.getRawMedication().medication.base_value);
                 }
 
                 @Override
@@ -88,26 +86,9 @@ public class ProductionFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         sharedGameDataViewModel = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
-        sharedGameDataViewModel.getBalance().observe(getViewLifecycleOwner(), balance -> {
-            counter.setText(balanceText + sharedGameDataViewModel.getAppendix());
-        });
-        refresh();
-    }
-
-    public void refresh() {
-        LocalUser localUser = sharedGameDataViewModel.getLocalUser();
-        API api = sharedGameDataViewModel.getApi();
-        api.getMedicineStore().medications(localUser, new PromiseHandler<Medication[]>() {
-            @Override
-            public void onDone(Medication[] object) {
-                System.out.println(Arrays.toString(object));
-            }
-
-            @Override
-            public void onError(ErrorCode errorCode) {
-                System.out.println(errorCode);
-            }
-
+        counter.setText(balanceText + sharedGameDataViewModel.getRawLocalUser().getBalance());
+        sharedGameDataViewModel.getBalance().observe(getViewLifecycleOwner(), user -> {
+            counter.setText(balanceText + sharedGameDataViewModel.getBalanceAppendix());
         });
     }
 }
