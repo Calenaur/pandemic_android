@@ -1,7 +1,8 @@
 package com.calenaur.pandemic.api.store;
 
 import com.android.volley.Request;
-import com.calenaur.pandemic.api.model.medication.Medication;
+import com.calenaur.pandemic.api.model.user.Friend;
+
 import com.calenaur.pandemic.api.model.user.JWT.JSONWebToken;
 import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.model.user.UserMedication;
@@ -10,7 +11,8 @@ import com.calenaur.pandemic.api.net.HTTPStatusCode;
 import com.calenaur.pandemic.api.net.PandemicRequest;
 import com.calenaur.pandemic.api.net.response.DefaultResponse;
 import com.calenaur.pandemic.api.net.response.ErrorCode;
-import com.calenaur.pandemic.api.net.response.medication.MedicationResponse;
+import com.calenaur.pandemic.api.net.response.user.FriendResponse;
+
 import com.calenaur.pandemic.api.net.response.user.LoginResponse;
 import com.calenaur.pandemic.api.net.response.user.UserMedicationByIdResponse;
 import com.calenaur.pandemic.api.net.response.user.UserMedicationResponse;
@@ -120,6 +122,7 @@ public class UserStore {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
                 .setPath("/medication/"+id)
+                .setLocalUser(localUser)
                 .setRequestListener((code, result) -> {
                     UserMedicationByIdResponse response;
                     try {
@@ -131,6 +134,121 @@ public class UserStore {
 
                     if (code == HTTPStatusCode.OK) {
                         promiseHandler.onDone(response.userMedication);
+                        return;
+                    }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(response));
+                }).create();
+
+        httpClient.queue(request);
+    }
+
+    public void friends(LocalUser localUser, PromiseHandler<FriendResponse[]> promiseHandler) {
+        PandemicRequest request = new PandemicRequest.Builder(httpClient)
+                .setMethod(Request.Method.GET)
+                .setPath("/user/friends")
+                .setLocalUser(localUser)
+                .setRequestListener((code, result) -> {
+                    ArrayList<FriendResponse> friendList = new ArrayList<>();
+                    try {
+                        ValueIterator<FriendResponse> values = JSON.std.beanSequenceFrom(FriendResponse.class, result);
+                        while (values.hasNext())
+                            friendList.add(values.next());
+                    } catch (IOException ignored) {
+                        promiseHandler.onError(ErrorCode.fromResponse(null));
+                        return;
+                    }
+
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(friendList.toArray(new FriendResponse[]{}));
+                        return;
+                    }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(null));
+                }).create();
+
+        httpClient.queue(request);
+    }
+
+    public void sendFriendRequest(LocalUser localUser, String friend, PromiseHandler<Object> promiseHandler) {
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("friend", friend);
+
+        PandemicRequest request = new PandemicRequest.Builder(httpClient)
+                .setMethod(Request.Method.POST)
+                .setPath("/user/friend_request")
+                .setLocalUser(localUser)
+                .setFormData(formData)
+                .setRequestListener((code, result) -> {
+                    DefaultResponse response;
+                    try {
+                        response = JSON.std.beanFrom(FriendResponse.class, result);
+                    } catch (IOException ignored) {
+                        promiseHandler.onError(ErrorCode.fromResponse(null));
+                        return;
+                    }
+
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(null);
+                        return;
+                    }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(response));
+                }).create();
+
+        httpClient.queue(request);
+    }
+
+    public void sendFriendResponse(LocalUser localUser, String friend, int userResponse, PromiseHandler<Object> promiseHandler) {
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("friend", friend);
+        formData.put("response", userResponse);
+
+        PandemicRequest request = new PandemicRequest.Builder(httpClient)
+                .setMethod(Request.Method.PUT)
+                .setPath("/user/friend_response")
+                .setLocalUser(localUser)
+                .setFormData(formData)
+                .setRequestListener((code, result) -> {
+                    DefaultResponse response;
+                    try {
+                        response = JSON.std.beanFrom(FriendResponse.class, result);
+                    } catch (IOException ignored) {
+                        promiseHandler.onError(ErrorCode.fromResponse(null));
+                        return;
+                    }
+
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(null);
+                        return;
+                    }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(response));
+                }).create();
+
+        httpClient.queue(request);
+    }
+
+    public void removeFriend(LocalUser localUser, String friend, PromiseHandler<Object> promiseHandler) {
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("friend", friend);
+
+        PandemicRequest request = new PandemicRequest.Builder(httpClient)
+                .setMethod(Request.Method.DELETE)
+                .setPath("/user/friend")
+                .setLocalUser(localUser)
+                .setFormData(formData)
+                .setRequestListener((code, result) -> {
+                    DefaultResponse response;
+                    try {
+                        response = JSON.std.beanFrom(FriendResponse.class, result);
+                    } catch (IOException ignored) {
+                        promiseHandler.onError(ErrorCode.fromResponse(null));
+                        return;
+                    }
+
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(null);
                         return;
                     }
 
