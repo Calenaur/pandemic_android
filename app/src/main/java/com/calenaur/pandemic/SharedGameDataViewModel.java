@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.calenaur.pandemic.api.API;
-import com.calenaur.pandemic.api.model.medication.Medication;
 import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.model.user.UserMedication;
 import com.calenaur.pandemic.api.register.Registrar;
@@ -29,11 +28,9 @@ public class SharedGameDataViewModel extends ViewModel {
     public void setApi(API api) {
         this.api.setValue(api);
     }
-
     public API getRawApi() {
         return api.getValue();
     }
-
     public MutableLiveData<API> getApi() {
         return api;
     }
@@ -42,11 +39,9 @@ public class SharedGameDataViewModel extends ViewModel {
     public void setLocalUser(LocalUser localUser) {
         this.localUser.setValue(localUser);
     }
-
     public LocalUser getRawLocalUser() {
         return localUser.getValue();
     }
-
     public MutableLiveData<LocalUser> getLocalUser() {
         return localUser;
     }
@@ -91,8 +86,7 @@ public class SharedGameDataViewModel extends ViewModel {
         }
     }
 
-    public String getBalanceAppendix(){
-        System.out.println("increment");
+    public String getBalanceAppendix() {
         return getAppendix(Objects.requireNonNull(localUser.getValue()).getBalance());
     }
     /*
@@ -103,7 +97,7 @@ public class SharedGameDataViewModel extends ViewModel {
         String[] appendixes = {"k","m","b","t","q","Q","v"};
 
         if ( value < Math.pow(10,3)){
-            return ""+value;
+            return "" + value;
         }else{
             for(int i = 1; i < appendixes.length; i++) {
                 if (value >= Math.pow(10, i*3) && value < Math.pow(10, (i+1)*3)) {

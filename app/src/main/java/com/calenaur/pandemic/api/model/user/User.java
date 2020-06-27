@@ -52,11 +52,12 @@ public class User implements Serializable {
         return false;
     }
 
+
     public void setBalance(long balance) {
         this.balance = balance;
     }
 
-    public void incrementBalance(long value){
+    public void incrementBalance(long value) {
         balance += value;
     }
 }

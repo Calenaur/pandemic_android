@@ -19,7 +19,6 @@ import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
 import com.calenaur.pandemic.api.model.user.UserMedication;
 
-
 public class ProductionFragment extends Fragment {
 
     private static final String balanceText = "$ :";
