@@ -6,4 +6,7 @@
         <attr name="titleViewStyle" format="reference"/>
         <attr name="textViewStyle" format="reference"/>
     </declare-styleable>
+    <declare-styleable name="MedicineCardView">
+        <attr name="clickable" format="boolean"/>
+    </declare-styleable>
 </resources>

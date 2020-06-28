@@ -40,6 +40,9 @@ public enum ErrorCode {
         if (response == null)
             return UNKNOWN;
 
+        if (response.error == null)
+            return UNKNOWN;
+
         return fromCode(response.error.code);
     }
 

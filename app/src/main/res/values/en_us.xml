@@ -6,9 +6,22 @@
     <string name="account_access">Access Level</string>
     <string name="account_balance">Balance</string>
     <string name="signup">Account created!</string>
+    <string name="insufficient_balance">Insufficient balance</string>
+    <string name="cancel">Cancel</string>
     <string name="production">Production</string>
+    <string name="medicine">Medicine</string>
     <string name="account">Account</string>
     <string name="register">Register</string>
+    <string name="research">Research</string>
+    <string name="research_options">Research options</string>
+    <string name="researching">Researching…</string>
+    <string name="research_new">New Medication</string>
+    <string name="research_leave">Stop research?</string>
+    <string name="research_leave_message">Leaving will discard all choices, proceed?</string>
+    <string name="research_leave_go">Leave</string>
+    <string name="research_new_cost">Attempt to research new medicine for $%1$d?</string>
+    <string name="research_new_pay">PAY $%1$d</string>
+    <string name="research_no_medications_found">No medications researched yet!\nPress the + button in the bottom right to begin.</string>
     <string name="pandemic_logo_description">Pandemic Logo</string>
     <string name="error_unknown">Unknown error</string>
     <string name="error_username_length">Username length must be between 2 and 16 characters</string>
@@ -19,6 +32,7 @@
     <string name="error_invalid_password">Invalid password</string>
     <string name="error_user_not_found">User not found</string>
     <string name="money">Money</string>
+    <string name="medication_card_view_traits">Traits</string>
     <string-array name="production_placeholder">
         <item>wow</item>
         <item>nice</item>

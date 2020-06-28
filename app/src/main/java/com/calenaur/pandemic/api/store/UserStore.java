@@ -1,6 +1,7 @@
 package com.calenaur.pandemic.api.store;
 
 import com.android.volley.Request;
+import com.calenaur.pandemic.api.model.medication.Medication;
 import com.calenaur.pandemic.api.model.user.JWT.JSONWebToken;
 import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.model.user.UserMedication;
@@ -9,11 +10,15 @@ import com.calenaur.pandemic.api.net.HTTPStatusCode;
 import com.calenaur.pandemic.api.net.PandemicRequest;
 import com.calenaur.pandemic.api.net.response.DefaultResponse;
 import com.calenaur.pandemic.api.net.response.ErrorCode;
+import com.calenaur.pandemic.api.net.response.medication.MedicationResponse;
 import com.calenaur.pandemic.api.net.response.user.LoginResponse;
 import com.calenaur.pandemic.api.net.response.user.UserMedicationByIdResponse;
 import com.calenaur.pandemic.api.net.response.user.UserMedicationResponse;
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.fasterxml.jackson.jr.ob.ValueIterator;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,25 +89,28 @@ public class UserStore {
         httpClient.queue(request);
     }
 
-    public void userMedications(LocalUser localUser, PromiseHandler<UserMedication[]> promiseHandler) {
+    public void userMedications(LocalUser localUser, PromiseHandler<UserMedicationResponse[]> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
-                .setPath("/medication")
+                .setLocalUser(localUser)
+                .setPath("/user/medication")
                 .setRequestListener((code, result) -> {
-                    UserMedicationResponse response;
+                    ArrayList<UserMedicationResponse> medicationList = new ArrayList<>();
                     try {
-                        response = JSON.std.beanFrom(UserMedicationResponse.class, result);
+                        ValueIterator<UserMedicationResponse> values = JSON.std.beanSequenceFrom(UserMedicationResponse.class, result);
+                        while (values.hasNext())
+                            medicationList.add(values.next());
                     } catch (IOException ignored) {
                         promiseHandler.onError(ErrorCode.fromResponse(null));
                         return;
                     }
 
                     if (code == HTTPStatusCode.OK) {
-                        promiseHandler.onDone(response.userMedications);
+                        promiseHandler.onDone(medicationList.toArray(new UserMedicationResponse[]{}));
                         return;
                     }
 
-                    promiseHandler.onError(ErrorCode.fromResponse(response));
+                    promiseHandler.onError(ErrorCode.fromResponse(null));
                 }).create();
 
         httpClient.queue(request);

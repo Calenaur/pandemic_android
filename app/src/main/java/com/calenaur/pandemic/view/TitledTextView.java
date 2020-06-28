@@ -35,8 +35,8 @@ public class TitledTextView extends LinearLayout {
     }
 
     private void initLayout() {
-        inflate(getContext(), R.layout.view_titled_text_view, this);
-        titleView = findViewById(R.id.title);
+        inflate(getContext(), R.layout.view_titled_text, this);
+        titleView = findViewById(R.id.name);
         textView = findViewById(R.id.text);
         titleView.setText(title);
         textView.setText(text);

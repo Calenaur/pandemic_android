@@ -13,8 +13,10 @@ import com.calenaur.pandemic.api.net.response.medication.MedicationResponse;
 import com.calenaur.pandemic.api.net.response.medication.MedicationTraitByIdResponse;
 import com.calenaur.pandemic.api.net.response.medication.MedicationTraitResponse;
 import com.fasterxml.jackson.jr.ob.JSON;
+import com.fasterxml.jackson.jr.ob.ValueIterator;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MedicineStore {
 
@@ -30,14 +32,18 @@ public class MedicineStore {
                 .setLocalUser(localUser)
                 .setPath("/medication")
                 .setRequestListener((code, result) -> {
-                    MedicationResponse response;
+                    ArrayList<Medication> medicationList = new ArrayList<>();
+                    MedicationResponse response = new MedicationResponse();
                     try {
-                        response = JSON.std.beanFrom(MedicationResponse.class, result);
+                        ValueIterator<Medication> values = JSON.std.beanSequenceFrom(Medication.class, result);
+                        while (values.hasNext())
+                            medicationList.add(values.next());
                     } catch (IOException ignored) {
                         promiseHandler.onError(ErrorCode.fromResponse(null));
                         return;
                     }
 
+                    response.medications = medicationList.toArray(new Medication[]{});
                     if (code == HTTPStatusCode.OK) {
                         promiseHandler.onDone(response.medications);
                         return;
@@ -80,14 +86,18 @@ public class MedicineStore {
                 .setLocalUser(localUser)
                 .setPath("/medication/trait")
                 .setRequestListener((code, result) -> {
-                    MedicationTraitResponse response;
+                    ArrayList<MedicationTrait> medicationTraitList = new ArrayList<>();
+                    MedicationTraitResponse response = new MedicationTraitResponse();
                     try {
-                        response = JSON.std.beanFrom(MedicationTraitResponse.class, result);
+                        ValueIterator<MedicationTrait> values = JSON.std.beanSequenceFrom(MedicationTrait.class, result);
+                        while (values.hasNext())
+                            medicationTraitList.add(values.next());
                     } catch (IOException ignored) {
                         promiseHandler.onError(ErrorCode.fromResponse(null));
                         return;
                     }
 
+                    response.medicationTraits = medicationTraitList.toArray(new MedicationTrait[]{});
                     if (code == HTTPStatusCode.OK) {
                         promiseHandler.onDone(response.medicationTraits);
                         return;
