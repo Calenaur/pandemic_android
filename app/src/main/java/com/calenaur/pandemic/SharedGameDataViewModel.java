@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class SharedGameDataViewModel extends ViewModel {
 
-    public static final int BASE_CLICK_VALUE = 1;
+    public static final int BASE_CLICK_VALUE = 100;
     public static final int BASE_RESEARCH_COST = 500;
 
     private Registrar registrar;
@@ -79,14 +79,14 @@ public class SharedGameDataViewModel extends ViewModel {
     * */
     @SuppressLint("DefaultLocale")
     public String getAppendix(long value){
-        String[] appendixes = {"k","m","b","t","q","Q","v"};
+        String[] appendixes = {"K","M","B","T","q","Q","V"};
 
         if ( value < Math.pow(10,3)){
             return "" + value;
         }else{
-            for(int i = 0; i < appendixes.length; i++) {
+            for(int i = 1; i < appendixes.length; i++) {
                 if (value >= Math.pow(10, i*3) && value < Math.pow(10, (i+1)*3)) {
-                    return String.format("%.1f %s", value / Math.pow(10, i*3), appendixes[i]);
+                    return String.format("%.1f %s", value / Math.pow(10, i*3), appendixes[i-1]);
                 }
             }
             return "-1";

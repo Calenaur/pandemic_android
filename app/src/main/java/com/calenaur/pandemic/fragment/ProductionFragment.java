@@ -47,6 +47,7 @@ public class ProductionFragment extends Fragment {
             }
             sharedGameDataViewModel.incrementBalance();
             TextView indicator = new TextView(getContext());
+            indicator.setTextSize(20f);
 
             generator.startAnimation(pulse);
 
