@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class SharedGameDataViewModel extends ViewModel {
 
-    public static final int BASE_CLICK_VALUE = 100;
+    public static final int BASE_CLICK_VALUE = 10000;
     public static final int BASE_RESEARCH_COST = 500;
 
     private Registrar registrar;
@@ -60,14 +60,12 @@ public class SharedGameDataViewModel extends ViewModel {
         if(balance.getValue() == null && localUser != null){
             balance.setValue(localUser.getBalance());
         }
-
-        int incrementValue = getClickValue();
-        localUser.incrementBalance(incrementValue);
-        balance.setValue(balance.getValue() + incrementValue);
+        localUser.incrementBalance(clickValue);
+        balance.setValue(balance.getValue() + clickValue);
     }
 
-    public int getClickValue() {
-        return clickValue;
+    public String getClickValue() {
+        return getAppendix(clickValue);
     }
 
     public String getBalanceAppendix() {
