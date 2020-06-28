@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public class SharedGameDataViewModel extends ViewModel {
 
-    public static final int BASE_CLICK_VALUE = 10000;
+    public static final int BASE_CLICK_VALUE = 1;
     public static final int BASE_RESEARCH_COST = 500;
 
     private Registrar registrar;
