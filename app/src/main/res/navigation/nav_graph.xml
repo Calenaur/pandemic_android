@@ -24,12 +24,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/medicineFragment"
-        android:name="com.calenaur.pandemic.fragment.MedicineFragment"
-        android:label="@string/medicine"
-        tools:layout="@layout/fragment_medicine" />
-
-    <fragment
         android:id="@+id/accountFragment"
         android:name="com.calenaur.pandemic.fragment.AccountFragment"
         android:label="@string/account"

@@ -60,14 +60,12 @@ public class SharedGameDataViewModel extends ViewModel {
         if(balance.getValue() == null && localUser != null){
             balance.setValue(localUser.getBalance());
         }
-
-        int incrementValue = getClickValue();
-        localUser.incrementBalance(incrementValue);
-        balance.setValue(balance.getValue() + incrementValue);
+        localUser.incrementBalance(clickValue);
+        balance.setValue(balance.getValue() + clickValue);
     }
 
-    public int getClickValue() {
-        return clickValue;
+    public String getClickValue() {
+        return getAppendix(clickValue);
     }
 
     public String getBalanceAppendix() {
@@ -79,14 +77,14 @@ public class SharedGameDataViewModel extends ViewModel {
     * */
     @SuppressLint("DefaultLocale")
     public String getAppendix(long value){
-        String[] appendixes = {"k","m","b","t","q","Q","v"};
+        String[] appendixes = {"K","M","B","T","q","Q","V"};
 
         if ( value < Math.pow(10,3)){
             return "" + value;
         }else{
-            for(int i = 0; i < appendixes.length; i++) {
+            for(int i = 1; i < appendixes.length; i++) {
                 if (value >= Math.pow(10, i*3) && value < Math.pow(10, (i+1)*3)) {
-                    return String.format("%.1f %s", value / Math.pow(10, i*3), appendixes[i]);
+                    return String.format("%.1f %s", value / Math.pow(10, i*3), appendixes[i-1]);
                 }
             }
             return "-1";

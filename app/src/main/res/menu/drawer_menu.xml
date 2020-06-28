@@ -6,11 +6,6 @@
         android:title="@string/production" />
 
     <item
-        android:id="@id/medicineFragment"
-        android:icon="@drawable/ic_antivirus"
-        android:title="@string/medicine" />
-
-    <item
         android:id="@id/researchFragment"
         android:icon="@drawable/ic_baseline_research_24"
         android:title="@string/research" />
