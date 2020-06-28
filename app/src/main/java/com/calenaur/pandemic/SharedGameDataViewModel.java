@@ -6,14 +6,12 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.calenaur.pandemic.api.API;
-import com.calenaur.pandemic.api.model.Tier;
-import com.calenaur.pandemic.api.model.medication.Medication;
-import com.calenaur.pandemic.api.model.medication.MedicationTrait;
 import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.model.user.UserMedication;
 import com.calenaur.pandemic.api.register.Registrar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SharedGameDataViewModel extends ViewModel {
 
@@ -25,7 +23,7 @@ public class SharedGameDataViewModel extends ViewModel {
     private LocalUser localUser;
 
     private int currentMedicationIndex = 0;
-    private UserMedication[] medications = new UserMedication[]{new UserMedication(1, new Medication(1, "Placebo", "Suger Caputuale", 1, 0, 0, 1, Tier.COMMON), new MedicationTrait[]{})};
+    private ArrayList<UserMedication> medicationList = new ArrayList<>();
 
     private MutableLiveData<Long> balance = new MutableLiveData<>();
 
@@ -49,19 +47,16 @@ public class SharedGameDataViewModel extends ViewModel {
     public void setCurrentMedicationIndex(int medicationIndex) { this.currentMedicationIndex = medicationIndex; }
     public int getCurrentMedicationIndex() { return currentMedicationIndex; }
 
+    public ArrayList<UserMedication> getMedicationList() {
+        return medicationList;
+    }
+
     public UserMedication getCurrentMedication(){
-        return medications[currentMedicationIndex];
+        return medicationList.get(currentMedicationIndex);
     }
 
     //Medications getter ans setter.
-    public void setMedications(UserMedication[] medications) { this.medications = medications; }
-    public UserMedication[] getMedications() { return medications; }
-    public void addMedication(UserMedication userMedication){
-        UserMedication[] temp = new UserMedication[medications.length + 1];
-        System.arraycopy(medications, 0, temp, 0, medications.length);
-        System.arraycopy(new UserMedication[]{userMedication}, 0,temp,medications.length,1);
-        medications = temp;
-    }
+    public UserMedication[] getMedications() { return medicationList.toArray(new UserMedication[]{}); }
 
     //Registrar Getters and Setters
     public Registrar getRegistrar() { return registrar; }
@@ -74,7 +69,7 @@ public class SharedGameDataViewModel extends ViewModel {
         if(balance.getValue() == null && localUser != null){
             balance.setValue(localUser.getBalance());
         }
-        UserMedication currentMedication = medications[currentMedicationIndex];
+        UserMedication currentMedication = medicationList.get(currentMedicationIndex);
         if(localUser != null &&  currentMedication != null){
             int incrementValue = currentMedication.medication.base_value;
             localUser.incrementBalance(incrementValue);
@@ -103,5 +98,12 @@ public class SharedGameDataViewModel extends ViewModel {
             }
             return "-1";
         }
+    }
+
+    public void setMedications(UserMedication[] medications) {
+        if (medications == null)
+            return;
+
+        medicationList.addAll(Arrays.asList(medications));
     }
 }

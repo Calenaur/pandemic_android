@@ -11,13 +11,17 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
+import com.calenaur.pandemic.api.model.user.UserMedication;
+import com.calenaur.pandemic.view.MedicineCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class ResearchFragment extends Fragment {
 
+    private LinearLayout medicationLayout;
     private FloatingActionButton fab;
     private SharedGameDataViewModel data;
 
@@ -27,19 +31,35 @@ public class ResearchFragment extends Fragment {
     }
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        data = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
+        medicationLayout = view.findViewById(R.id.medications);
         fab = view.findViewById(R.id.add);
         fab.setOnClickListener(this::onFABClick);
+
+        Bundle args = getArguments();
+        if (args != null)
+            if (args.containsKey("user_medication")) {
+                UserMedication userMedication = (UserMedication) args.getSerializable("user_medication");
+                data.getMedicationList().add(userMedication);
+            }
+
+        UserMedication[] medications = data.getMedications();
+        if (medications == null)
+            return;
+
+        if (medications.length < 1)
+            return;
+
+        medicationLayout.removeAllViews();
+        for (UserMedication userMedication : medications) {
+            medicationLayout.addView(new MedicineCardView(getContext(), userMedication));
+        }
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         data = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
-        refresh();
-    }
-
-    public void refresh() {
-
     }
 
     public void onFABClick(View v) {

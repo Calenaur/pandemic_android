@@ -5,15 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
 import com.calenaur.pandemic.api.API;
@@ -23,10 +24,10 @@ import com.calenaur.pandemic.api.net.response.ErrorCode;
 import com.calenaur.pandemic.api.register.Registrar;
 import com.calenaur.pandemic.api.store.PromiseHandler;
 import com.calenaur.pandemic.app.PandemicApplication;
+import com.calenaur.pandemic.fragment.BackActionListener;
+import com.calenaur.pandemic.fragment.ProductionFragment;
 import com.calenaur.pandemic.navigation.NavigationUtils;
 import com.google.android.material.navigation.NavigationView;
-
-
 
 public class GameActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -74,18 +75,56 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    private Fragment getCurrentFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.getFragments().size() < 1)
+            return null;
+
+        Fragment navHostFragment = fragmentManager.getFragments().get(0);
+        if (!(navHostFragment instanceof NavHostFragment))
+            return null;
+
+        FragmentManager childFragmentManager = navHostFragment.getChildFragmentManager();
+        if (childFragmentManager.getFragments().size() < 1)
+            return null;
+
+        return childFragmentManager.getFragments().get(0);
+    }
+
+    /**
+     * @return whether or not to consume the event
+     */
+    private boolean raiseOnBackAction(Fragment fragment) {
+        if (fragment instanceof BackActionListener)
+            return ((BackActionListener) fragment).onBackAction();
+
+        return false;
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
+        if (raiseOnBackAction(getCurrentFragment()))
+            return false;
+
         return NavigationUI.navigateUp(navController, drawerLayout);
     }
 
     @Override
     public void onBackPressed() {
+
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+            return;
         }
+
+        Fragment fragment = getCurrentFragment();
+        if (raiseOnBackAction(fragment))
+            return;
+
+        if (fragment instanceof ProductionFragment)
+            return;
+
+        super.onBackPressed();
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.calenaur.pandemic.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -8,8 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -20,6 +25,7 @@ import com.calenaur.pandemic.SharedGameDataViewModel;
 import com.calenaur.pandemic.api.model.medication.Medication;
 import com.calenaur.pandemic.api.model.medication.MedicationTrait;
 import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.api.model.user.UserMedication;
 import com.calenaur.pandemic.view.MedicineCardView;
 
 import java.lang.ref.WeakReference;
@@ -27,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-public class ResearchChoiceFragment extends Fragment {
+public class ResearchChoiceFragment extends Fragment implements BackActionListener {
 
     private static final int RESEARCH_TIME_SECONDS = 5;
 
@@ -89,13 +95,39 @@ public class ResearchChoiceFragment extends Fragment {
         layoutParams.setMargins(10, 10, 10, 10);
 
         MedicineCardView card = new MedicineCardView(getActivity(), medication, traits);
+        card.setLayoutParams(layoutParams);
         card.setClickable(true);
         card.setOnClickListener(this::onCandidateSelect);
-        card.setLayoutParams(layoutParams);
         researchCandidates.addView(card);
     }
 
-    private void onCandidateSelect(View view) {
+    private void onCandidateSelect(View v) {
+        if (!(v instanceof MedicineCardView))
+            return;
+
+        MedicineCardView cardView = (MedicineCardView) v;
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("user_medication", new UserMedication(-1, cardView.getMedication(), cardView.getMedicationTier()));
+
+        NavController navController = Navigation.findNavController(researchCandidates);
+        navController.popBackStack(R.id.researchChoiceFragment, true);
+        navController.navigate(R.id.researchFragment, bundle);
+
+    }
+
+    @Override
+    public boolean onBackAction() {
+        AlertDialog dialog = new AlertDialog.Builder(getContext())
+                .setTitle(R.string.research_leave)
+                .setCancelable(true)
+                .setMessage(R.string.research_leave_message)
+                .setPositiveButton(R.string.research_leave_go, (d, w) -> {
+                    Navigation.findNavController(researchCandidates).popBackStack();
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .create();
+        dialog.show();
+        return true;
     }
 
     private static class LoadTask extends AsyncTask<View, Void, Void> {

@@ -10,6 +10,7 @@ import androidx.cardview.widget.CardView;
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.api.model.medication.Medication;
 import com.calenaur.pandemic.api.model.medication.MedicationTrait;
+import com.calenaur.pandemic.api.model.user.UserMedication;
 
 public class MedicineCardView extends LinearLayout {
 
@@ -18,8 +19,12 @@ public class MedicineCardView extends LinearLayout {
     private boolean clickable;
     private CardView card;
 
+    public MedicineCardView(Context context, UserMedication userMedication) {
+        this(context, userMedication.medication, userMedication.medicationTraits);
+    }
+
     public MedicineCardView(Context context, Medication medication, MedicationTrait[] medicationTraits) {
-        this(context, null);
+        this(context, (AttributeSet) null);
         this.medication = medication;
         this.medicationTraits = medicationTraits;
         updateInfo();
@@ -47,6 +52,9 @@ public class MedicineCardView extends LinearLayout {
     }
 
     private void updateInfo() {
+        if (medication == null || medicationTraits == null)
+            return;
+
         TextView name = card.findViewById(R.id.name);
         TextView tier = card.findViewById(R.id.tier);
         TextView description = card.findViewById(R.id.description);
@@ -70,15 +78,11 @@ public class MedicineCardView extends LinearLayout {
         }
     }
 
-    public void setClickable(boolean clickable) {
-        card.setClickable(clickable);
-    }
-
-    private Medication getMedication() {
+    public Medication getMedication() {
         return medication;
     }
 
-    private MedicationTrait[] getMedicationTier() {
+    public MedicationTrait[] getMedicationTier() {
         return medicationTraits;
     }
 }
