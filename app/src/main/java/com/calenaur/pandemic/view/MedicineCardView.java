@@ -40,7 +40,7 @@ public class MedicineCardView extends LinearLayout {
     }
 
     private void initLayout() {
-        View view = inflate(getContext(), R.layout.view_medication_card_view, this);
+        View view = inflate(getContext(), R.layout.view_medication_card, this);
         card = view.findViewById(R.id.card);
         card.setClickable(clickable);
         card.setMaxCardElevation(1f);
@@ -65,10 +65,8 @@ public class MedicineCardView extends LinearLayout {
         }
 
         for (MedicationTrait trait : medicationTraits) {
-            TextView t = new TextView(getContext());
-            t.setText(String.format("%s: %s", trait.name, trait.getTier().getName()));
-            t.setTextColor(trait.getTier().getColor());
-            traits.addView(t);
+            MedicineTraitView traitView = new MedicineTraitView(getContext(), trait);
+            traits.addView(traitView);
         }
     }
 

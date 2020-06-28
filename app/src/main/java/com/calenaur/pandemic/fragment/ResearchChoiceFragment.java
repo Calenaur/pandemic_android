@@ -49,11 +49,7 @@ public class ResearchChoiceFragment extends Fragment {
         researchCandidates = view.findViewById(R.id.research_candidates);
         View loader = view.findViewById(R.id.loader);
         View content = view.findViewById(R.id.content);
-        new LoadTask(getActivity()).execute(loader, content);
-
-        for (int i=0; i<3; i++) {
-            generateCandidate();
-        }
+        new LoadTask(this, getActivity()).execute(loader, content);
     }
 
     private void generateCandidate() {
@@ -109,9 +105,11 @@ public class ResearchChoiceFragment extends Fragment {
 
     private static class LoadTask extends AsyncTask<View, Void, Void> {
 
+        private WeakReference<ResearchChoiceFragment> researchChoiceFragment;
         private WeakReference<Activity> activityRef;
 
-        LoadTask(Activity activity) {
+        LoadTask(ResearchChoiceFragment researchChoiceFragment, Activity activity) {
+            this.researchChoiceFragment = new WeakReference<>(researchChoiceFragment);
             this.activityRef = new WeakReference<>(activity);
         }
 
@@ -135,6 +133,9 @@ public class ResearchChoiceFragment extends Fragment {
                 inAnimation.setDuration(200);
                 view.setAnimation(inAnimation);
                 view.setVisibility(View.VISIBLE);
+                for (int i=0; i<10; i++) {
+                    researchChoiceFragment.get().generateCandidate();
+                }
             });
 
             try {
