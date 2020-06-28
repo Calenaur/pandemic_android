@@ -14,6 +14,7 @@ import com.calenaur.pandemic.api.model.user.UserMedication;
 
 public class MedicineCardView extends LinearLayout {
 
+    private UserMedication userMedication;
     private Medication medication;
     private MedicationTrait[] medicationTraits;
     private boolean clickable;
@@ -21,6 +22,7 @@ public class MedicineCardView extends LinearLayout {
 
     public MedicineCardView(Context context, UserMedication userMedication) {
         this(context, userMedication.medication, userMedication.medicationTraits);
+        this.userMedication = userMedication;
     }
 
     public MedicineCardView(Context context, Medication medication, MedicationTrait[] medicationTraits) {
@@ -84,5 +86,9 @@ public class MedicineCardView extends LinearLayout {
 
     public MedicationTrait[] getMedicationTier() {
         return medicationTraits;
+    }
+
+    public UserMedication getUserMedication() {
+        return userMedication;
     }
 }

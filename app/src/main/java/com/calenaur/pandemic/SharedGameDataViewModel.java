@@ -6,26 +6,24 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.calenaur.pandemic.api.API;
+import com.calenaur.pandemic.api.model.medication.MedicationTrait;
 import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.model.user.UserMedication;
 import com.calenaur.pandemic.api.register.Registrar;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class SharedGameDataViewModel extends ViewModel {
 
+    public static final int BASE_CLICK_VALUE = 1;
     public static final int BASE_RESEARCH_COST = 500;
 
     private Registrar registrar;
     private API api;
-
     private LocalUser localUser;
-
-    private int currentMedicationIndex = 0;
-    private ArrayList<UserMedication> medicationList = new ArrayList<>();
-
+    private int currentUserMedicationID = -1;
     private MutableLiveData<Long> balance = new MutableLiveData<>();
+    private int clickValue = BASE_CLICK_VALUE;
 
     //API Getters/Setters
     public void setApi(API api) {
@@ -44,19 +42,12 @@ public class SharedGameDataViewModel extends ViewModel {
     }
 
     //CurrentMedicationIndex getter ans setter.
-    public void setCurrentMedicationIndex(int medicationIndex) { this.currentMedicationIndex = medicationIndex; }
-    public int getCurrentMedicationIndex() { return currentMedicationIndex; }
-
-    public ArrayList<UserMedication> getMedicationList() {
-        return medicationList;
-    }
-
     public UserMedication getCurrentMedication(){
-        return medicationList.get(currentMedicationIndex);
+        return registrar.getUserMedicationRegistry().get(currentUserMedicationID);
     }
 
     //Medications getter ans setter.
-    public UserMedication[] getMedications() { return medicationList.toArray(new UserMedication[]{}); }
+    public UserMedication[] getMedications() { return registrar.getUserMedicationRegistry().toArray(new UserMedication[]{}); }
 
     //Registrar Getters and Setters
     public Registrar getRegistrar() { return registrar; }
@@ -69,12 +60,14 @@ public class SharedGameDataViewModel extends ViewModel {
         if(balance.getValue() == null && localUser != null){
             balance.setValue(localUser.getBalance());
         }
-        UserMedication currentMedication = medicationList.get(currentMedicationIndex);
-        if(localUser != null &&  currentMedication != null){
-            int incrementValue = currentMedication.medication.base_value;
-            localUser.incrementBalance(incrementValue);
-            balance.setValue(balance.getValue() + incrementValue);
-        }
+
+        int incrementValue = getClickValue();
+        localUser.incrementBalance(incrementValue);
+        balance.setValue(balance.getValue() + incrementValue);
+    }
+
+    public int getClickValue() {
+        return clickValue;
     }
 
     public String getBalanceAppendix() {
@@ -91,7 +84,7 @@ public class SharedGameDataViewModel extends ViewModel {
         if ( value < Math.pow(10,3)){
             return "" + value;
         }else{
-            for(int i = 1; i < appendixes.length; i++) {
+            for(int i = 0; i < appendixes.length; i++) {
                 if (value >= Math.pow(10, i*3) && value < Math.pow(10, (i+1)*3)) {
                     return String.format("%.1f %s", value / Math.pow(10, i*3), appendixes[i]);
                 }
@@ -100,10 +93,24 @@ public class SharedGameDataViewModel extends ViewModel {
         }
     }
 
-    public void setMedications(UserMedication[] medications) {
-        if (medications == null)
-            return;
+    public void calcClickValue() {
+        UserMedication userMedication = getCurrentMedication();
+        if (userMedication != null)
+            if (userMedication.medication != null) {
+                double value = userMedication.medication.base_value;
+                if (userMedication.medicationTraits != null)
+                    for (MedicationTrait trait : userMedication.medicationTraits)
+                        value *= trait.getMultiplier();
 
-        medicationList.addAll(Arrays.asList(medications));
+                clickValue = (int) Math.floor(value);
+                return;
+            }
+
+        clickValue =  BASE_CLICK_VALUE;
+    }
+
+    public void setCurrentUserMedicationID(int currentUserMedicationID) {
+        this.currentUserMedicationID = currentUserMedicationID;
+        calcClickValue();
     }
 }

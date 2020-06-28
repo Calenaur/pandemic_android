@@ -48,18 +48,6 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             sharedGameDataViewModel.setLocalUser(localUser);
             sharedGameDataViewModel.setApi(api);
             sharedGameDataViewModel.setRegistrar(registrar);
-
-            api.getUserStore().userMedications(localUser, new PromiseHandler<UserMedication[]>() {
-                @Override
-                public void onDone(UserMedication[] object) {
-                    sharedGameDataViewModel.setMedications(object);
-                }
-
-                @Override
-                public void onError(ErrorCode errorCode) {
-                    Log.e("TAG", "onError: "+errorCode);
-                }
-            });
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);

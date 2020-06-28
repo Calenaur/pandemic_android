@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ public class ProductionFragment extends Fragment {
     @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        Animation pulse = AnimationUtils.loadAnimation(getContext(), R.anim.pulse);
         generator = view.findViewById(R.id.generator);
         counter = view.findViewById(R.id.counter);
         clickContainer = view.findViewById(R.id.clickContainer);
@@ -46,6 +48,8 @@ public class ProductionFragment extends Fragment {
             sharedGameDataViewModel.incrementBalance();
             TextView indicator = new TextView(getContext());
 
+            generator.startAnimation(pulse);
+
             final Animation out = new AlphaAnimation(1.0f, 0.0f);
             out.setDuration(1000);
 
@@ -53,7 +57,7 @@ public class ProductionFragment extends Fragment {
 
                 @Override
                 public void onAnimationStart(Animation animation) {
-                    indicator.setText("+"+sharedGameDataViewModel.getCurrentMedication().medication.base_value);
+                    indicator.setText("+"+sharedGameDataViewModel.getClickValue());
                 }
 
                 @Override

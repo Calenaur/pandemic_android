@@ -40,7 +40,8 @@ public class ResearchFragment extends Fragment {
         if (args != null)
             if (args.containsKey("user_medication")) {
                 UserMedication userMedication = (UserMedication) args.getSerializable("user_medication");
-                data.getMedicationList().add(userMedication);
+                //TODO::This will only work with ID from the database, make a PUT request first
+                data.getRegistrar().getUserMedicationRegistry().register(-1, userMedication);
             }
 
         UserMedication[] medications = data.getMedications();
@@ -52,8 +53,22 @@ public class ResearchFragment extends Fragment {
 
         medicationLayout.removeAllViews();
         for (UserMedication userMedication : medications) {
-            medicationLayout.addView(new MedicineCardView(getContext(), userMedication));
+            MedicineCardView card = new MedicineCardView(getContext(), userMedication);
+            card.setClickable(true);
+            card.setOnClickListener(this::onMedicineCardClick);
+            medicationLayout.addView(card);
         }
+    }
+
+    private void onMedicineCardClick(View view) {
+        if (!(view instanceof MedicineCardView))
+            return;
+
+        MedicineCardView card = (MedicineCardView) view;
+        if (card.getUserMedication() == null)
+            return;
+
+        data.setCurrentUserMedicationID(card.getUserMedication().id);
     }
 
     @Override
