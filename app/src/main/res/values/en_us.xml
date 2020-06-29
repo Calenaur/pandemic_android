@@ -11,8 +11,8 @@
     <string name="production">Production</string>
     <string name="medicine">Medicine</string>
     <string name="account">Account</string>
-    <string name="friends">Friends</string>
     <string name="register">Register</string>
+
     <string name="ok">OK</string>
     <string name="loading">Loading…</string>
     <string name="tier">Tier</string>
@@ -20,6 +20,12 @@
     <string name="disease_no_special_diseases_active">No special diseases have appeared yet.</string>
     <string name="event">Events</string>
     <string name="event_no_events_found">No events have occurred yet.</string>
+
+    <string name="friends">Friends</string>
+    <string name="add_friend">Add friend</string>
+    <string name="add_new_friend_message">Please enter your friends name.</string>
+    <string name="no_such_user">No such user by this name</string>
+
     <string name="research">Research</string>
     <string name="research_options">Research options</string>
     <string name="researching">Researching…</string>
@@ -30,6 +36,7 @@
     <string name="research_new_cost">Attempt to research new medicine for $%1$d?</string>
     <string name="research_new_pay">PAY $%1$d</string>
     <string name="research_no_medications_found">No medications researched yet!\nPress the + button in the bottom right to begin.</string>
+
     <string name="pandemic_logo_description">Pandemic Logo</string>
     <string name="error_unknown">Unknown error</string>
     <string name="error_username_length">Username length must be between 2 and 16 characters</string>

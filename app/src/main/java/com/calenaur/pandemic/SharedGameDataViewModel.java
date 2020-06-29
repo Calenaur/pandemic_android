@@ -6,21 +6,19 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.calenaur.pandemic.api.API;
-import com.calenaur.pandemic.api.model.disease.Disease;
 import com.calenaur.pandemic.api.model.medication.Medication;
 import com.calenaur.pandemic.api.model.medication.MedicationDisease;
 import com.calenaur.pandemic.api.model.medication.MedicationTrait;
 import com.calenaur.pandemic.api.model.user.Friend;
 import com.calenaur.pandemic.api.model.user.LocalUser;
-import com.calenaur.pandemic.api.model.user.User;
 import com.calenaur.pandemic.api.model.user.UserDisease;
-import com.calenaur.pandemic.api.model.user.UserEvent;
 import com.calenaur.pandemic.api.model.user.UserMedication;
 import com.calenaur.pandemic.api.register.KeyPair;
 import com.calenaur.pandemic.api.register.PairRegistry;
+import com.calenaur.pandemic.api.net.response.ErrorCode;
 import com.calenaur.pandemic.api.register.Registrar;
+import com.calenaur.pandemic.api.store.PromiseHandler;
 
-import java.util.ArrayList;
 
 public class SharedGameDataViewModel extends ViewModel {
 
@@ -75,6 +73,20 @@ public class SharedGameDataViewModel extends ViewModel {
 
     //Friend getter
     public Friend[] getFriends() { return registrar.getFriendRegistry().toArray(new Friend[]{}); }
+
+    public void addFriend(String friend){
+        api.getUserStore().sendFriendRequest(localUser, friend, new PromiseHandler<Object>() {
+            @Override
+            public void onDone(Object object) {
+
+            }
+
+            @Override
+            public void onError(ErrorCode errorCode) {
+
+            }
+        });
+    }
 
     public void incrementBalance(){
         if (localUser == null)
