@@ -10,6 +10,7 @@ import com.calenaur.pandemic.api.model.disease.Disease;
 import com.calenaur.pandemic.api.model.medication.Medication;
 import com.calenaur.pandemic.api.model.medication.MedicationDisease;
 import com.calenaur.pandemic.api.model.medication.MedicationTrait;
+import com.calenaur.pandemic.api.model.user.Friend;
 import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.model.user.User;
 import com.calenaur.pandemic.api.model.user.UserDisease;
@@ -71,6 +72,9 @@ public class SharedGameDataViewModel extends ViewModel {
 
         return balance.getValue();
     }
+
+    //Friend getter
+    public Friend[] getFriends() { return registrar.getFriendRegistry().toArray(new Friend[]{}); }
 
     public void incrementBalance(){
         if (localUser == null)

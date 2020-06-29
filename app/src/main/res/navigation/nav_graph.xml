@@ -27,6 +27,9 @@
         <action
             android:id="@+id/action_productionFragment_to_diseaseFragment"
             app:destination="@id/diseaseFragment" />
+        <action
+            android:id="@+id/action_productionFragment_to_friendFragment"
+            app:destination="@id/friendFragment" />
     </fragment>
 
     <fragment
@@ -72,5 +75,11 @@
             android:name="local_user"
             app:argType="com.calenaur.pandemic.api.model.user.LocalUser" />
     </fragment>
+
+    <fragment
+        android:id="@+id/friendFragment"
+        android:name="com.calenaur.pandemic.fragment.FriendFragment"
+        android:label="@string/friends"
+        tools:layout="@layout/fragment_friend_list" />
 
 </navigation>
