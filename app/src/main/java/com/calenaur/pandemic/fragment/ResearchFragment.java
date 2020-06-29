@@ -7,7 +7,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +42,8 @@ public class ResearchFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null)
             if (args.containsKey("user_medication")) {
+                NavController navController = Navigation.findNavController(medicationLayout);
+                navController.popBackStack();
                 UserMedication userMedication = (UserMedication) args.getSerializable("user_medication");
                 //TODO::This will only work with ID from the database, make a PUT request first
                 data.getRegistrar().getUserMedicationRegistry().register(-1, userMedication);

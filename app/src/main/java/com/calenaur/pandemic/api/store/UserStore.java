@@ -101,7 +101,6 @@ public class UserStore {
                 .setPath("/user/medication")
                 .setRequestListener((code, result) -> {
                     ArrayList<UserMedication> medicationList = new ArrayList<>();
-                    Log.e("DEBUG", result);
                     try {
                         ValueIterator<UserMedication> values = JSON.std.beanSequenceFrom(UserMedication.class, result);
                         while (values.hasNext())
