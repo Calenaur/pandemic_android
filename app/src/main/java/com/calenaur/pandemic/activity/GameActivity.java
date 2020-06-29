@@ -3,6 +3,7 @@ package com.calenaur.pandemic.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -12,9 +13,15 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
+
+import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.AlphaAnimation;
+
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
 import com.calenaur.pandemic.api.API;
@@ -26,11 +33,14 @@ import com.calenaur.pandemic.api.store.PromiseHandler;
 import com.calenaur.pandemic.app.PandemicApplication;
 import com.calenaur.pandemic.fragment.BackActionListener;
 import com.calenaur.pandemic.fragment.ProductionFragment;
+import com.calenaur.pandemic.fragment.ResearchChoiceFragment;
 import com.calenaur.pandemic.navigation.NavigationUtils;
 import com.google.android.material.navigation.NavigationView;
+import java.lang.ref.WeakReference;
 
 public class GameActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private ConstraintLayout loader;
     private DrawerLayout drawerLayout;
     private NavController navController;
     private LocalUser localUser;
@@ -39,11 +49,15 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        drawerLayout = findViewById(R.id.drawer_layout);
         if (getIntent().hasExtra("local_user")) {
             localUser = (LocalUser) getIntent().getSerializableExtra("local_user");
+            loader = findViewById(R.id.loader);
+            loader.bringToFront();
             API api = ((PandemicApplication)getApplication()).getAPI();
             Registrar registrar = new Registrar();
-            registrar.updateAll(api, localUser);
+            LoadTask loadTask = new LoadTask(api, localUser, registrar, this);
+            loadTask.execute(drawerLayout, loader);
             SharedGameDataViewModel sharedGameDataViewModel = ViewModelProviders.of(this).get(SharedGameDataViewModel.class);
             sharedGameDataViewModel.setLocalUser(localUser);
             sharedGameDataViewModel.setApi(api);
@@ -53,7 +67,6 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navView = findViewById(R.id.nav_view);
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
@@ -124,5 +137,58 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         return NavigationUtils.onNavDestinationSelectedWithArgs(menuItem, navController, bundle) || super.onOptionsItemSelected(menuItem);
     }
 
+    private static class LoadTask extends AsyncTask<View, Void, Void> {
 
+        private WeakReference<API> api;
+        private WeakReference<LocalUser> localUser;
+        private WeakReference<Registrar> registrar;
+        private WeakReference<Activity> activityRef;
+
+        LoadTask(API api, LocalUser localUser, Registrar registrar, Activity activity) {
+            this.api = new WeakReference<>(api);
+            this.localUser = new WeakReference<>(localUser);
+            this.registrar = new WeakReference<>(registrar);
+            this.activityRef = new WeakReference<>(activity);
+        }
+
+        @Override
+        protected Void doInBackground(View... views) {
+            Activity activity = activityRef.get();
+            if (activity == null) {
+                return null;
+            }
+
+            if (views.length < 1) {
+                return null;
+            }
+
+            DrawerLayout drawerLayout = (DrawerLayout) views[0];
+            View loader = views[1];
+            activity.runOnUiThread(() -> {
+                AlphaAnimation inAnimation = new AlphaAnimation(0f, 1f);
+                inAnimation.setDuration(200);
+                loader.setAnimation(inAnimation);
+                loader.setVisibility(View.VISIBLE);
+            });
+
+            try {
+                registrar.get().updateAll(api.get(), localUser.get());
+                while (!registrar.get().isUpdated()) {
+                    Thread.sleep(1000);
+                }
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            activity.runOnUiThread(() -> {
+                AlphaAnimation outAnimation = new AlphaAnimation(1f, 0f);
+                outAnimation.setDuration(200);
+                loader.setAnimation(outAnimation);
+                loader.setVisibility(View.GONE);
+                drawerLayout.removeView(loader);
+            });
+            return null;
+        }
+    }
 }

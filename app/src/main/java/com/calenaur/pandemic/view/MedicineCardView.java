@@ -20,8 +20,8 @@ public class MedicineCardView extends LinearLayout {
     private boolean clickable;
     private CardView card;
 
-    public MedicineCardView(Context context, UserMedication userMedication) {
-        this(context, userMedication.medication, userMedication.medicationTraits);
+    public MedicineCardView(Context context, UserMedication userMedication, Medication medication, MedicationTrait[] medicationTraits) {
+        this(context, medication, medicationTraits);
         this.userMedication = userMedication;
     }
 
@@ -84,7 +84,7 @@ public class MedicineCardView extends LinearLayout {
         return medication;
     }
 
-    public MedicationTrait[] getMedicationTier() {
+    public MedicationTrait[] getMedicationTraits() {
         return medicationTraits;
     }
 

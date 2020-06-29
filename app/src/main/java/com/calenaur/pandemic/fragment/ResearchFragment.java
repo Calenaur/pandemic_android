@@ -53,7 +53,12 @@ public class ResearchFragment extends Fragment {
 
         medicationLayout.removeAllViews();
         for (UserMedication userMedication : medications) {
-            MedicineCardView card = new MedicineCardView(getContext(), userMedication);
+            MedicineCardView card = new MedicineCardView(
+                    getContext(),
+                    userMedication,
+                    userMedication.getMedication(data.getRegistrar().getMedicationRegistry()),
+                    userMedication.getMedicationTraits(data.getRegistrar().getMedicationTraitRegistry())
+            );
             card.setClickable(true);
             card.setOnClickListener(this::onMedicineCardClick);
             medicationLayout.addView(card);

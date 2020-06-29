@@ -1,10 +1,13 @@
 package com.calenaur.pandemic.api.store;
 
+import android.util.Log;
+
 import com.android.volley.Request;
 import com.calenaur.pandemic.api.model.user.Friend;
 
 import com.calenaur.pandemic.api.model.user.JWT.JSONWebToken;
 import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.api.model.user.UserEvent;
 import com.calenaur.pandemic.api.model.user.UserMedication;
 import com.calenaur.pandemic.api.net.HTTPClient;
 import com.calenaur.pandemic.api.net.HTTPStatusCode;
@@ -91,15 +94,16 @@ public class UserStore {
         httpClient.queue(request);
     }
 
-    public void userMedications(LocalUser localUser, PromiseHandler<UserMedicationResponse[]> promiseHandler) {
+    public void userMedications(LocalUser localUser, PromiseHandler<UserMedication[]> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
                 .setLocalUser(localUser)
                 .setPath("/user/medication")
                 .setRequestListener((code, result) -> {
-                    ArrayList<UserMedicationResponse> medicationList = new ArrayList<>();
+                    ArrayList<UserMedication> medicationList = new ArrayList<>();
+                    Log.e("DEBUG", result);
                     try {
-                        ValueIterator<UserMedicationResponse> values = JSON.std.beanSequenceFrom(UserMedicationResponse.class, result);
+                        ValueIterator<UserMedication> values = JSON.std.beanSequenceFrom(UserMedication.class, result);
                         while (values.hasNext())
                             medicationList.add(values.next());
                     } catch (IOException ignored) {
@@ -108,7 +112,34 @@ public class UserStore {
                     }
 
                     if (code == HTTPStatusCode.OK) {
-                        promiseHandler.onDone(medicationList.toArray(new UserMedicationResponse[]{}));
+                        promiseHandler.onDone(medicationList.toArray(new UserMedication[]{}));
+                        return;
+                    }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(null));
+                }).create();
+
+        httpClient.queue(request);
+    }
+
+    public void userEvents(LocalUser localUser, PromiseHandler<UserEvent[]> promiseHandler) {
+        PandemicRequest request = new PandemicRequest.Builder(httpClient)
+                .setMethod(Request.Method.GET)
+                .setLocalUser(localUser)
+                .setPath("/user/event/mine")
+                .setRequestListener((code, result) -> {
+                    ArrayList<UserEvent> userEventList = new ArrayList<>();
+                    try {
+                        ValueIterator<UserEvent> values = JSON.std.beanSequenceFrom(UserEvent.class, result);
+                        while (values.hasNext())
+                            userEventList.add(values.next());
+                    } catch (IOException ignored) {
+                        promiseHandler.onError(ErrorCode.fromResponse(null));
+                        return;
+                    }
+
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(userEventList.toArray(new UserEvent[]{}));
                         return;
                     }
 
