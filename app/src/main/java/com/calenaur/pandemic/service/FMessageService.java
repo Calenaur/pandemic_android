@@ -11,8 +11,8 @@ public class FMessageService extends FirebaseMessagingService {
     private static final String TAG = "FMService";
 
     @Override
-    public void onNewToken(@NonNull String s) {
-        super.onNewToken(s);
+    public void onNewToken(@NonNull String token) {
+        Log.e(TAG, String.format("onNewToken: %s",token));
     }
 
     @Override

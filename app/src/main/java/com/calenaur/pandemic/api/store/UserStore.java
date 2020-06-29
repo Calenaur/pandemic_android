@@ -342,7 +342,7 @@ public class UserStore {
     public void friends(LocalUser localUser, PromiseHandler<Friend[]> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
-                .setPath("/user/friends")
+                .setPath("/user/friend")
                 .setLocalUser(localUser)
                 .setRequestListener((code, result) -> {
                     ArrayList<Friend> friendList = new ArrayList<>();
@@ -374,7 +374,7 @@ public class UserStore {
 
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.POST)
-                .setPath("/user/friend_request")
+                .setPath("/user/friend")
                 .setLocalUser(localUser)
                 .setFormData(formData)
                 .setRequestListener((code, result) -> {
@@ -404,7 +404,7 @@ public class UserStore {
 
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.PUT)
-                .setPath("/user/friend_response")
+                .setPath("/user/friend")
                 .setLocalUser(localUser)
                 .setFormData(formData)
                 .setRequestListener((code, result) -> {
