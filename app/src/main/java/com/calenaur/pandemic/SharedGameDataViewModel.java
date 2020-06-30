@@ -8,11 +8,15 @@ import androidx.lifecycle.ViewModel;
 import com.calenaur.pandemic.api.API;
 import com.calenaur.pandemic.api.model.disease.Disease;
 import com.calenaur.pandemic.api.model.medication.Medication;
+import com.calenaur.pandemic.api.model.medication.MedicationDisease;
 import com.calenaur.pandemic.api.model.medication.MedicationTrait;
 import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.model.user.User;
 import com.calenaur.pandemic.api.model.user.UserDisease;
+import com.calenaur.pandemic.api.model.user.UserEvent;
 import com.calenaur.pandemic.api.model.user.UserMedication;
+import com.calenaur.pandemic.api.register.KeyPair;
+import com.calenaur.pandemic.api.register.PairRegistry;
 import com.calenaur.pandemic.api.register.Registrar;
 
 import java.util.ArrayList;
@@ -122,6 +126,7 @@ public class SharedGameDataViewModel extends ViewModel {
         if (userMedication != null) {
             Medication medication = userMedication.getMedication(registrar.getMedicationRegistry());
             MedicationTrait[] medicationTraits = userMedication.getMedicationTraits(registrar.getMedicationTraitRegistry());
+            //Medication traits effectiveness
             if (medication != null) {
                 double value = medication.base_value;
                 if (medicationTraits != null)
@@ -129,17 +134,19 @@ public class SharedGameDataViewModel extends ViewModel {
                         value *= trait.getMultiplier();
 
                 clickValue = (int) Math.floor(value);
-                return;
             }
 
-            //TODO::Effectiveness
-            /*
-            UserDisease[] userDiseases = registrar.getUserDiseaseRegistry().toArray(new UserDisease[]{});
+            UserDisease[] userDiseases = getRegistrar().getUserDiseaseRegistry().toArray(new UserDisease[]{});
+            PairRegistry<MedicationDisease> mdRegistry = getRegistrar().getMedicationDiseaseRegistry();
+            //Active diseases effectiveness
             for (UserDisease userDisease : userDiseases) {
-                Disease disease = userDisease.getDisease(registrar.getDiseaseRegistry());
-
+                KeyPair key = new KeyPair(userMedication.medication, userDisease.id);
+                if (mdRegistry.containsKey(key)) {
+                    MedicationDisease medicationDisease = mdRegistry.get(key);
+                    clickValue = (int) Math.floor(clickValue * (medicationDisease.effectiveness / 100d));
+                }
             }
-             */
+            return;
         }
 
         clickValue =  BASE_CLICK_VALUE;

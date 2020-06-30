@@ -43,7 +43,7 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int EVENT_DELAY_MILLIS = 1000;
+    private static final int EVENT_DELAY_MILLIS = 5000;
     private static final int SAVE_DELAY_MILLIS = 60000;
 
     private ConstraintLayout loader;
@@ -54,6 +54,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     private Handler saveHandler;
     private SharedGameDataViewModel data;
     private long lastBalance;
+    private boolean isPaused;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +86,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout);
         NavigationUI.setupWithNavController(navView, navController);
         navView.setNavigationItemSelectedListener(this);
+        isPaused = false;
     }
 
     public void startEventHandler() {
@@ -97,7 +99,24 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         saveHandler.postDelayed(this::handleSave, SAVE_DELAY_MILLIS);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isPaused = false;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isPaused = true;
+    }
+
     private void handleEvent() {
+        if (isPaused) {
+            eventHandler.postDelayed(this::handleEvent, EVENT_DELAY_MILLIS);
+            return;
+        }
+
         Random random = new Random();
         if (random.nextFloat() < 0.1)
             if (data.getRegistrar().isUpdated() && !isFinishing()) {
@@ -144,18 +163,19 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
 
     private void onEvent(LocalUser localUser, Event event) {
         UserDisease userDisease = null;
+        Tier tier = null;
         switch (event.id) {
             case 1:
-                localUser.setTier(Tier.Uncommon);
+                tier = Tier.Uncommon;
                 break;
             case 2:
-                localUser.setTier(Tier.Rare);
+                tier = Tier.Rare;
                 break;
             case 3:
-                localUser.setTier(Tier.Epic);
+                tier = Tier.Epic;
                 break;
             case 4:
-                localUser.setTier(Tier.Legendary);
+                tier = Tier.Legendary;
                 break;
             case 5:
             case 6:
@@ -191,15 +211,32 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         } else {
             data.calcClickValue();
         }
+
+        if (tier != null) {
+            localUser.setTier(tier);
+            data.getApi().getUserStore().putTier(localUser, tier, PromiseHandler.EMPTY_HANDLER);
+        }
     }
 
     private void handleSave() {
+        if (isPaused) {
+            saveHandler.postDelayed(this::handleSave, SAVE_DELAY_MILLIS);
+            return;
+        }
+
         long balance = data.getBalance();
         if (lastBalance != balance) {
             data.getApi().getUserStore().putBalance(localUser, data.getBalance(), PromiseHandler.EMPTY_HANDLER);
             lastBalance = balance;
         }
         saveHandler.postDelayed(this::handleSave, SAVE_DELAY_MILLIS);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        isPaused = false;
+        handleSave();
     }
 
     private Fragment getCurrentFragment() {

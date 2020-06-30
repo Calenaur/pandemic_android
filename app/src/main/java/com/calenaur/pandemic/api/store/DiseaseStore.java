@@ -24,7 +24,7 @@ public class DiseaseStore {
     public void getDiseases(LocalUser localUser, PromiseHandler<Disease[]> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
-                .setPath("/disease/")
+                .setPath("/disease")
                 .setLocalUser(localUser)
                 .setRequestListener((code, result) -> {
                     ArrayList<Disease> diseaseList = new ArrayList<>();
