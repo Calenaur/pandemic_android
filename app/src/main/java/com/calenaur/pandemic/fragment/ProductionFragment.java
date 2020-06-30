@@ -1,6 +1,7 @@
 package com.calenaur.pandemic.fragment;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -17,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
+import com.calenaur.pandemic.api.model.Tier;
 
 public class ProductionFragment extends Fragment {
 
@@ -48,6 +50,10 @@ public class ProductionFragment extends Fragment {
             sharedGameDataViewModel.incrementBalance();
             TextView indicator = new TextView(getContext());
             indicator.setTextSize(20f);
+//            Tier color = Tier.fromID(sharedGameDataViewModel.getCurrentMedication().medication.tier);
+//            if(color != null){
+//                indicator.setTextColor(color.getColor());
+//            }
 
             generator.startAnimation(pulse);
 

@@ -86,6 +86,8 @@ public class SharedGameDataViewModel extends ViewModel {
             @Override
             public void onError(ErrorCode errorCode) {}
         });
+        registrar.updateRequestRegistry(api, localUser);
+        registrar.updateFriendRegistry(api, localUser);
     }
 
     public void addFriend(String friend){
@@ -104,6 +106,8 @@ public class SharedGameDataViewModel extends ViewModel {
             @Override
             public void onError(ErrorCode errorCode) {}
         });
+        registrar.updateRequestRegistry(api, localUser);
+        registrar.updateFriendRegistry(api, localUser);
     }
 
     public void incrementBalance(){
@@ -113,6 +117,7 @@ public class SharedGameDataViewModel extends ViewModel {
         if (balance.getValue() == null && localUser != null)
             balance.setValue(localUser.getBalance());
 
+        assert localUser != null;
         localUser.incrementBalance(clickValue);
         balance.setValue(balance.getValue() + clickValue);
     }

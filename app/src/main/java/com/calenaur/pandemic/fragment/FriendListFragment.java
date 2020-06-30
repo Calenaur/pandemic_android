@@ -21,6 +21,7 @@ import com.calenaur.pandemic.view.FriendCardView;
 public class FriendListFragment extends Fragment {
 
     private LinearLayout friendsLayout;
+    private SharedGameDataViewModel sharedGameDataViewModel;
 
     public FriendListFragment() {
     }
@@ -38,8 +39,12 @@ public class FriendListFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        SharedGameDataViewModel sharedGameDataViewModel = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
+        sharedGameDataViewModel = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
+        update();
+    }
 
+
+    public void update(){
         Friend[] friends = sharedGameDataViewModel.getFriends();
         if (friends == null)
             return;
@@ -53,6 +58,5 @@ public class FriendListFragment extends Fragment {
             friendsLayout.addView(card);
         }
     }
-
 
 }

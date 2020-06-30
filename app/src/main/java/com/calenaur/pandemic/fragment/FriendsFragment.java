@@ -111,7 +111,8 @@ public class FriendsFragment extends Fragment {
         @NonNull
         @Override
         public Fragment getItem(int position) {
-            return fragmentList.get(position);
+            Fragment fragment = fragmentList.get(position);
+            return fragment;
         }
 
         @Override
