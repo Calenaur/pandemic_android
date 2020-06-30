@@ -278,6 +278,7 @@ public class Registrar {
                             i, object[i]
                     );
                 }
+                updateDone();
             }
 
             @Override
@@ -302,6 +303,7 @@ public class Registrar {
                             i, object[i]
                     );
                 }
+                updateDone();
             }
 
             @Override
