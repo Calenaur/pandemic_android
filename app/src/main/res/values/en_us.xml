@@ -12,7 +12,11 @@
     <string name="medicine">Medicine</string>
     <string name="account">Account</string>
     <string name="register">Register</string>
+    <string name="ok">OK</string>
     <string name="loading">Loading…</string>
+    <string name="event">Events</string>
+    <string name="event_no_events_found">No events have occurred yet.</string>
+    <string name="tier">Tier</string>
     <string name="research">Research</string>
     <string name="research_options">Research options</string>
     <string name="researching">Researching…</string>

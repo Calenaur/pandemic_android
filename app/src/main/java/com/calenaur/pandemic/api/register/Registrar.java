@@ -97,7 +97,7 @@ public class Registrar {
     }
 
     public void updateUserMedicationRegistry(API api, LocalUser localUser) {
-        api.getUserStore().userMedications(localUser, new PromiseHandler<UserMedication[]>() {
+        api.getUserStore().getUserMedications(localUser, new PromiseHandler<UserMedication[]>() {
             @Override
             public void onDone(UserMedication[] object) {
                 userMedicationRegistry.clear();
@@ -141,7 +141,7 @@ public class Registrar {
     }
 
     private void updateUserEventRegistry(API api, LocalUser localUser) {
-        api.getUserStore().userEvents(localUser, new PromiseHandler<UserEvent[]>() {
+        api.getUserStore().getUserEvents(localUser, new PromiseHandler<UserEvent[]>() {
             @Override
             public void onDone(UserEvent[] object) {
                 userEventRegistry.clear();
@@ -172,6 +172,14 @@ public class Registrar {
 
     public Registry<UserMedication> getUserMedicationRegistry() {
         return userMedicationRegistry;
+    }
+
+    public Registry<Event> getEventRegistry() {
+        return eventRegistry;
+    }
+
+    public Registry<UserEvent> getUserEventRegistry() {
+        return userEventRegistry;
     }
 
     private void updateDone() {

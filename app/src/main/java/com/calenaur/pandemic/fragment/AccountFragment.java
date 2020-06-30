@@ -21,6 +21,7 @@ public class AccountFragment extends Fragment {
     private TitledTextView username;
     private TitledTextView balance;
     private TitledTextView access;
+    private TitledTextView tier;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,6 +33,7 @@ public class AccountFragment extends Fragment {
         username = view.findViewById(R.id.username);
         balance = view.findViewById(R.id.balance);
         access = view.findViewById(R.id.access);
+        tier = view.findViewById(R.id.tier);
         refresh();
     }
 
@@ -48,6 +50,8 @@ public class AccountFragment extends Fragment {
         username.setText(localUser.getUsername());
         balance.setText("$" + localUser.getBalance());
         access.setText(String.valueOf(localUser.getAccessLevel()));
+        tier.setText(localUser.getTier().getName());
+        tier.setTextColor(localUser.getTier().getColor());
     }
 
 }

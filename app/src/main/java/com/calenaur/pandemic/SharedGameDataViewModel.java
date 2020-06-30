@@ -58,11 +58,25 @@ public class SharedGameDataViewModel extends ViewModel {
     public MutableLiveData<Long> getBalance() { return balance; }
 
     public void incrementBalance(){
-        if(balance.getValue() == null && localUser != null){
+        if (localUser == null)
+            return;
+
+        if(balance.getValue() == null && localUser != null)
             balance.setValue(localUser.getBalance());
-        }
+
         localUser.incrementBalance(clickValue);
         balance.setValue(balance.getValue() + clickValue);
+    }
+
+    public void pay(int amount){
+        if (localUser == null)
+            return;
+
+        if(balance.getValue() == null && localUser != null)
+            balance.setValue(localUser.getBalance());
+
+        localUser.incrementBalance(-amount);
+        balance.setValue(balance.getValue() + amount);
     }
 
     public String getClickValue() {

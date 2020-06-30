@@ -2,6 +2,7 @@ package com.calenaur.pandemic.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -78,6 +79,15 @@ public class MedicineCardView extends LinearLayout {
             MedicineTraitView traitView = new MedicineTraitView(getContext(), trait);
             traits.addView(traitView);
         }
+    }
+
+    public void setSelected(boolean selected) {
+        if (selected) {
+            card.setBackgroundColor(Color.parseColor("#e3f2fd"));
+            return;
+        }
+
+        card.setBackgroundColor(Color.WHITE);
     }
 
     public Medication getMedication() {

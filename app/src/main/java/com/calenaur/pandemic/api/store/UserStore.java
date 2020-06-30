@@ -94,7 +94,7 @@ public class UserStore {
         httpClient.queue(request);
     }
 
-    public void userMedications(LocalUser localUser, PromiseHandler<UserMedication[]> promiseHandler) {
+    public void getUserMedications(LocalUser localUser, PromiseHandler<UserMedication[]> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
                 .setLocalUser(localUser)
@@ -121,7 +121,7 @@ public class UserStore {
         httpClient.queue(request);
     }
 
-    public void userEvents(LocalUser localUser, PromiseHandler<UserEvent[]> promiseHandler) {
+    public void getUserEvents(LocalUser localUser, PromiseHandler<UserEvent[]> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
                 .setLocalUser(localUser)
@@ -148,7 +148,30 @@ public class UserStore {
         httpClient.queue(request);
     }
 
-    public void medicationsById(LocalUser localUser, int id, PromiseHandler<UserMedication> promiseHandler) {
+    public void putUserEvent(LocalUser localUser, UserEvent userEvent, PromiseHandler<Void> promiseHandler) {
+        if (localUser == null || userEvent == null)
+            return;
+
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("event", userEvent.id);
+        PandemicRequest request = new PandemicRequest.Builder(httpClient)
+                .setMethod(Request.Method.PUT)
+                .setLocalUser(localUser)
+                .setPath("/user/event")
+                .setFormData(formData)
+                .setRequestListener((code, result) -> {
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(null);
+                        return;
+                    }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(null));
+                }).create();
+
+        httpClient.queue(request);
+    }
+
+    public void getUserMedicationByID(LocalUser localUser, int id, PromiseHandler<UserMedication> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
                 .setPath("/medication/"+id)

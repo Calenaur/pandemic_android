@@ -104,6 +104,7 @@ public class ResearchChoiceFragment extends Fragment implements BackActionListen
     private void onCandidateSelect(View v) {
         if (!(v instanceof MedicineCardView))
             return;
+
         MedicineCardView cardView = (MedicineCardView) v;
         LinkedList<Integer> traits = new LinkedList<>();
         if (cardView.getMedicationTraits() != null)
@@ -117,7 +118,6 @@ public class ResearchChoiceFragment extends Fragment implements BackActionListen
         NavController navController = Navigation.findNavController(researchCandidates);
         navController.popBackStack(R.id.researchChoiceFragment, true);
         navController.navigate(R.id.researchFragment, bundle);
-
     }
 
     @Override

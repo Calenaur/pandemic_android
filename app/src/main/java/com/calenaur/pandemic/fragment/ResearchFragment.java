@@ -2,6 +2,7 @@ package com.calenaur.pandemic.fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,8 +10,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,14 +57,22 @@ public class ResearchFragment extends Fragment {
 
         medicationLayout.removeAllViews();
         for (UserMedication userMedication : medications) {
+            MedicineCardView.LayoutParams layoutParams = new MedicineCardView.LayoutParams(MedicineCardView.LayoutParams.MATCH_PARENT, MedicineCardView.LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(10, 10, 10, 10);
             MedicineCardView card = new MedicineCardView(
                     getContext(),
                     userMedication,
                     userMedication.getMedication(data.getRegistrar().getMedicationRegistry()),
                     userMedication.getMedicationTraits(data.getRegistrar().getMedicationTraitRegistry())
             );
+            card.setLayoutParams(layoutParams);
             card.setClickable(true);
             card.setOnClickListener(this::onMedicineCardClick);
+            UserMedication currentMedication = data.getCurrentMedication();
+            if (currentMedication != null)
+                if (currentMedication.id == userMedication.id)
+                    card.setSelected(true);
+
             medicationLayout.addView(card);
         }
     }
@@ -78,6 +85,11 @@ public class ResearchFragment extends Fragment {
         if (card.getUserMedication() == null)
             return;
 
+        for (int i=0; i<medicationLayout.getChildCount(); i++)
+            if (medicationLayout.getChildAt(i) instanceof MedicineCardView) {
+                MedicineCardView child = (MedicineCardView) medicationLayout.getChildAt(i);
+                child.setSelected(card.getMedication().id == child.getMedication().id);
+            }
         data.setCurrentUserMedicationID(card.getUserMedication().id);
     }
 

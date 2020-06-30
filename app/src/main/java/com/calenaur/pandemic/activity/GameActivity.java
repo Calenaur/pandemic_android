@@ -13,37 +13,43 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
-
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
-
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
 import com.calenaur.pandemic.api.API;
+import com.calenaur.pandemic.api.model.Tier;
+import com.calenaur.pandemic.api.model.event.Event;
 import com.calenaur.pandemic.api.model.user.LocalUser;
-import com.calenaur.pandemic.api.model.user.UserMedication;
+import com.calenaur.pandemic.api.model.user.UserEvent;
 import com.calenaur.pandemic.api.net.response.ErrorCode;
 import com.calenaur.pandemic.api.register.Registrar;
 import com.calenaur.pandemic.api.store.PromiseHandler;
 import com.calenaur.pandemic.app.PandemicApplication;
 import com.calenaur.pandemic.fragment.BackActionListener;
 import com.calenaur.pandemic.fragment.ProductionFragment;
-import com.calenaur.pandemic.fragment.ResearchChoiceFragment;
 import com.calenaur.pandemic.navigation.NavigationUtils;
 import com.google.android.material.navigation.NavigationView;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class GameActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final int EVENT_DELAY_MILLIS = 200;
 
     private ConstraintLayout loader;
     private DrawerLayout drawerLayout;
     private NavController navController;
     private LocalUser localUser;
+    private Handler eventHandler;
+    private SharedGameDataViewModel data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +64,10 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             Registrar registrar = new Registrar();
             LoadTask loadTask = new LoadTask(api, localUser, registrar, this);
             loadTask.execute(drawerLayout, loader);
-            SharedGameDataViewModel sharedGameDataViewModel = ViewModelProviders.of(this).get(SharedGameDataViewModel.class);
-            sharedGameDataViewModel.setLocalUser(localUser);
-            sharedGameDataViewModel.setApi(api);
-            sharedGameDataViewModel.setRegistrar(registrar);
+            data = ViewModelProviders.of(this).get(SharedGameDataViewModel.class);
+            data.setLocalUser(localUser);
+            data.setApi(api);
+            data.setRegistrar(registrar);
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -74,6 +80,82 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         NavigationUI.setupWithNavController(navView, navController);
         navView.setNavigationItemSelectedListener(this);
 
+    }
+
+    public void startEventHandler() {
+        eventHandler = new Handler();
+        eventHandler.postDelayed(this::handleEvent, EVENT_DELAY_MILLIS);
+    }
+
+    private void handleEvent() {
+        Random random = new Random();
+        if (random.nextFloat() < 0.1)
+            if (data.getRegistrar().isUpdated() && !isFinishing()) {
+                Event[] events = data.getRegistrar().getEventRegistry().toArray(new Event[]{});
+                ArrayList<Integer> idList = new ArrayList<>();
+                for (Event event : events)
+                    if (event != null)
+                        if (!data.getRegistrar().getUserEventRegistry().containsKey(event.id))
+                            if (event.getTier().getID() <= localUser.getTier().getID())
+                                for (int i=0; i<event.rarity; i++)
+                                    idList.add(event.id);
+
+                if (idList.size() > 0) {
+                    int id = idList.get(random.nextInt(idList.size()));
+                    Event event = data.getRegistrar().getEventRegistry().get(id);
+                    if (event != null) {
+                        Activity gameActivity = this;
+                        UserEvent userEvent = new UserEvent(localUser.getUid(), event.id);
+                        data.getApi().getUserStore().putUserEvent(localUser, userEvent, new PromiseHandler<Void>() {
+                            @Override
+                            public void onDone(Void object) {
+                                data.getRegistrar().getUserEventRegistry().register(userEvent.id, userEvent);
+                                onEvent(localUser, event);
+                                AlertDialog dialog = new AlertDialog.Builder(gameActivity)
+                                        .setTitle(event.name)
+                                        .setCancelable(true)
+                                        .setMessage(event.description)
+                                        .setPositiveButton(R.string.ok, null)
+                                        .create();
+                                dialog.show();
+                            }
+
+                            @Override
+                            public void onError(ErrorCode errorCode) {
+
+                            }
+                        });
+                    }
+                }
+            }
+
+        eventHandler.postDelayed(this::handleEvent, EVENT_DELAY_MILLIS);
+    }
+
+    private void onEvent(LocalUser localUser, Event event) {
+        switch (event.id) {
+            case 1:
+                localUser.setTier(Tier.Uncommon);
+                break;
+            case 2:
+                localUser.setTier(Tier.Rare);
+                break;
+            case 3:
+                localUser.setTier(Tier.Epic);
+                break;
+            case 4:
+                localUser.setTier(Tier.Legendary);
+                break;
+            case 5:
+            case 6:
+                break;
+            case 7:
+                data.pay(-5000);
+                break;
+            case 8:
+                data.pay(5000);
+                break;
+        }
     }
 
     private Fragment getCurrentFragment() {
@@ -141,9 +223,9 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         private WeakReference<API> api;
         private WeakReference<LocalUser> localUser;
         private WeakReference<Registrar> registrar;
-        private WeakReference<Activity> activityRef;
+        private WeakReference<GameActivity> activityRef;
 
-        LoadTask(API api, LocalUser localUser, Registrar registrar, Activity activity) {
+        LoadTask(API api, LocalUser localUser, Registrar registrar, GameActivity activity) {
             this.api = new WeakReference<>(api);
             this.localUser = new WeakReference<>(localUser);
             this.registrar = new WeakReference<>(registrar);
@@ -181,6 +263,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             }
 
             activity.runOnUiThread(() -> {
+                activityRef.get().startEventHandler();
                 AlphaAnimation outAnimation = new AlphaAnimation(1f, 0f);
                 outAnimation.setDuration(200);
                 loader.setAnimation(outAnimation);
