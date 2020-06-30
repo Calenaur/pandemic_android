@@ -5,6 +5,14 @@ public class Friend {
     private int balance;
     private int tier;
 
+    public Friend(){}
+
+    public Friend(String name, int balance, int tier) {
+        this.name = name;
+        this.balance = balance;
+        this.tier = tier;
+    }
+
     public String getName() {
         return name;
     }
@@ -27,5 +35,14 @@ public class Friend {
 
     public void setTier(int tier) {
         this.tier = tier;
+    }
+
+    @Override
+    public String toString() {
+        return "Friend{" +
+                "name='" + name + '\'' +
+                ", balance=" + balance +
+                ", tier=" + tier +
+                '}';
     }
 }

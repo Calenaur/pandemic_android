@@ -1,5 +1,6 @@
-package com.calenaur.pandemic.fragment;
+package com.calenaur.pandemic.adapter;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -10,16 +11,15 @@ import com.calenaur.pandemic.R;
 
 import com.calenaur.pandemic.api.model.user.Friend;
 
-import java.util.List;
+public class FriendRecyclerViewAdapter extends RecyclerView.Adapter<FriendRecyclerViewAdapter.ViewHolder> {
 
-public class MyFriendRecyclerViewAdapter extends RecyclerView.Adapter<MyFriendRecyclerViewAdapter.ViewHolder> {
+    private Friend[] mValues;
 
-    private final List<Friend> mValues;
-
-    public MyFriendRecyclerViewAdapter(List<Friend> items) {
+    public FriendRecyclerViewAdapter(Friend[] items) {
         mValues = items;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -29,18 +29,18 @@ public class MyFriendRecyclerViewAdapter extends RecyclerView.Adapter<MyFriendRe
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mNameView.setText(mValues.get(position).getName());
-        holder.mBalanceView.setText(mValues.get(position).getBalance());
-        holder.mTierView.setText(mValues.get(position).getTier());
+        holder.mItem = mValues[position];
+        holder.mNameView.setText(mValues[position].getName());
+        holder.mBalanceView.setText(String.valueOf(mValues[position].getBalance()));
+        holder.mTierView.setText(String.valueOf(mValues[position].getTier()));
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mValues.length;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mNameView;
         public final TextView mBalanceView;
@@ -55,9 +55,16 @@ public class MyFriendRecyclerViewAdapter extends RecyclerView.Adapter<MyFriendRe
             mTierView = view.findViewById(R.id.tier);
         }
 
+        @NonNull
         @Override
         public String toString() {
-            return super.toString() + " '" + mBalanceView.getText() + "'";
+            return "ViewHolder{" +
+                    "mView=" + mView +
+                    ", mNameView=" + mNameView +
+                    ", mBalanceView=" + mBalanceView +
+                    ", mTierView=" + mTierView +
+                    ", mItem=" + mItem +
+                    '}';
         }
     }
 }

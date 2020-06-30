@@ -7,7 +7,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.Navigation;
@@ -18,11 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
+import com.calenaur.pandemic.adapter.FriendRecyclerViewAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Arrays;
@@ -32,7 +30,7 @@ public class FriendFragment extends Fragment {
     private SharedGameDataViewModel sharedGameDataViewModel;
     private FloatingActionButton addButton;
     private EditText input;
-    private View view;
+    private RecyclerView recyclerView;
 
     public FriendFragment() {
     }
@@ -44,7 +42,7 @@ public class FriendFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        this.view = view;
+        recyclerView = view.findViewById(R.id.list);
         addButton = view.findViewById(R.id.add_friend);
         addButton.setOnClickListener(this::onAddFriendClick);
     }
@@ -55,12 +53,9 @@ public class FriendFragment extends Fragment {
         sharedGameDataViewModel = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new MyFriendRecyclerViewAdapter(Arrays.asList(sharedGameDataViewModel.getFriends())));
-        }
+        recyclerView.setAdapter(new FriendRecyclerViewAdapter(sharedGameDataViewModel.getFriends()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+
     }
 
     private void onAddFriendClick(View v) {
@@ -79,7 +74,10 @@ public class FriendFragment extends Fragment {
     }
 
     private void onNewFriend(DialogInterface dialog, int which) {
-        sharedGameDataViewModel.addFriend(input.getText().toString());
+        String inputValue = input.getText().toString();
+        if (!inputValue.equals("")){
+            sharedGameDataViewModel.addFriend(inputValue);
+        }
         dialog.dismiss();
         Navigation.findNavController(addButton).navigate(R.id.friendFragment);
     }

@@ -18,6 +18,7 @@ import com.calenaur.pandemic.api.net.response.ErrorCode;
 import com.calenaur.pandemic.api.store.PromiseHandler;
 
 import java.util.LinkedList;
+import java.util.Arrays;
 
 public class Registrar {
 
@@ -259,6 +260,8 @@ public class Registrar {
         api.getUserStore().friends(localUser, new PromiseHandler<Friend[]>() {
             @Override
             public void onDone(Friend[] object) {
+                System.out.println("------------------------------------------");
+                System.out.println(Arrays.toString(object));
                 friendRegistry.clear();
                 if (object == null)
                     return;
@@ -266,7 +269,6 @@ public class Registrar {
                 for (int i= 0; i<object.length; i++) {
                     if (object[i] == null)
                         continue;
-
                     friendRegistry.register(
                             i, object[i]
                     );
