@@ -20,7 +20,7 @@ import com.calenaur.pandemic.SharedGameDataViewModel;
 
 public class ProductionFragment extends Fragment {
 
-    private static final String balanceText = "$ :";
+    private static final String balanceText = "$";
 
     private SharedGameDataViewModel sharedGameDataViewModel;
 
@@ -59,6 +59,7 @@ public class ProductionFragment extends Fragment {
                 @Override
                 public void onAnimationStart(Animation animation) {
                     indicator.setText("+"+sharedGameDataViewModel.getClickValue());
+                    indicator.setTextColor(getResources().getColor(R.color.colorMoney, null));
                 }
 
                 @Override
@@ -86,7 +87,7 @@ public class ProductionFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         sharedGameDataViewModel = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
         counter.setText(balanceText + sharedGameDataViewModel.getLocalUser().getBalance());
-        sharedGameDataViewModel.getBalance().observe(getViewLifecycleOwner(), user -> {
+        sharedGameDataViewModel.getBalanceMutable().observe(getViewLifecycleOwner(), user -> {
             counter.setText(balanceText + sharedGameDataViewModel.getBalanceAppendix());
         });
     }

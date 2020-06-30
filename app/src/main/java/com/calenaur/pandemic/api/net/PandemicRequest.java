@@ -1,13 +1,9 @@
 package com.calenaur.pandemic.api.net;
 
-import androidx.annotation.Nullable;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
-import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonRequest;
 import com.calenaur.pandemic.api.model.user.LocalUser;
@@ -81,6 +77,26 @@ public class PandemicRequest extends JsonRequest<String> {
                     formDataBuilder.append("&");
 
                 formDataBuilder.append(entry.getKey()).append("=").append(entry.getValue());
+            }
+
+            this.formData = formDataBuilder.toString();
+            return this;
+        }
+
+        public Builder setFormDataArray(Map<String, Object[]> formData) {
+            StringBuilder formDataBuilder = new StringBuilder();
+            for (Map.Entry<String, Object[]> entry : formData.entrySet()) {
+                if (formDataBuilder.length() > 0)
+                    formDataBuilder.append("&");
+
+                Object[] values = entry.getValue();
+                for (int i=0; i<values.length; i++) {
+                    Object o = values[i];
+                    if (i > 0)
+                        formDataBuilder.append("&");
+
+                    formDataBuilder.append(entry.getKey()).append("=").append(o);
+                }
             }
 
             this.formData = formDataBuilder.toString();

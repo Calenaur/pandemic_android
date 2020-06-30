@@ -2,6 +2,7 @@ package com.calenaur.pandemic.api.store;
 
 import com.android.volley.Request;
 import com.calenaur.pandemic.api.model.medication.Medication;
+import com.calenaur.pandemic.api.model.medication.MedicationDisease;
 import com.calenaur.pandemic.api.model.medication.MedicationTrait;
 import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.net.HTTPClient;
@@ -18,15 +19,15 @@ import com.fasterxml.jackson.jr.ob.ValueIterator;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MedicineStore {
+public class MedicationStore {
 
     private HTTPClient httpClient;
 
-    public MedicineStore(HTTPClient httpClient) {
+    public MedicationStore(HTTPClient httpClient) {
         this.httpClient = httpClient;
     }
 
-    public void medications(LocalUser localUser, PromiseHandler<Medication[]> promiseHandler) {
+    public void getMedications(LocalUser localUser, PromiseHandler<Medication[]> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
                 .setLocalUser(localUser)
@@ -55,7 +56,7 @@ public class MedicineStore {
         httpClient.queue(request);
     }
 
-    public void medicationById(LocalUser localUser, int id, PromiseHandler<Medication> promiseHandler) {
+    public void getMedicationByID(LocalUser localUser, int id, PromiseHandler<Medication> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
                 .setLocalUser(localUser)
@@ -80,7 +81,7 @@ public class MedicineStore {
         httpClient.queue(request);
     }
 
-    public void medicationTraits(LocalUser localUser, PromiseHandler<MedicationTrait[]> promiseHandler) {
+    public void getMedicationTraits(LocalUser localUser, PromiseHandler<MedicationTrait[]> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
                 .setLocalUser(localUser)
@@ -109,7 +110,7 @@ public class MedicineStore {
         httpClient.queue(request);
     }
 
-    public void medicationTraitById(LocalUser localUser, int id, PromiseHandler<MedicationTrait> promiseHandler) {
+    public void getMedicationTraitByID(LocalUser localUser, int id, PromiseHandler<MedicationTrait> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
                 .setLocalUser(localUser)
@@ -129,6 +130,33 @@ public class MedicineStore {
                     }
 
                     promiseHandler.onError(ErrorCode.fromResponse(response));
+                }).create();
+
+        httpClient.queue(request);
+    }
+
+    public void getMedicationDiseases(LocalUser localUser, PromiseHandler<MedicationDisease[]> promiseHandler) {
+        PandemicRequest request = new PandemicRequest.Builder(httpClient)
+                .setMethod(Request.Method.GET)
+                .setLocalUser(localUser)
+                .setPath("/disease/medication")
+                .setRequestListener((code, result) -> {
+                    ArrayList<MedicationDisease> medicationDiseaseList = new ArrayList<>();
+                    try {
+                        ValueIterator<MedicationDisease> values = JSON.std.beanSequenceFrom(MedicationDisease.class, result);
+                        while (values.hasNext())
+                            medicationDiseaseList.add(values.next());
+                    } catch (IOException ignored) {
+                        promiseHandler.onError(ErrorCode.fromResponse(null));
+                        return;
+                    }
+
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(medicationDiseaseList.toArray(new MedicationDisease[]{}));
+                        return;
+                    }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(null));
                 }).create();
 
         httpClient.queue(request);

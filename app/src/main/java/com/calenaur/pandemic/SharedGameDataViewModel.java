@@ -6,10 +6,17 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.calenaur.pandemic.api.API;
+import com.calenaur.pandemic.api.model.disease.Disease;
 import com.calenaur.pandemic.api.model.medication.Medication;
+import com.calenaur.pandemic.api.model.medication.MedicationDisease;
 import com.calenaur.pandemic.api.model.medication.MedicationTrait;
 import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.api.model.user.User;
+import com.calenaur.pandemic.api.model.user.UserDisease;
+import com.calenaur.pandemic.api.model.user.UserEvent;
 import com.calenaur.pandemic.api.model.user.UserMedication;
+import com.calenaur.pandemic.api.register.KeyPair;
+import com.calenaur.pandemic.api.register.PairRegistry;
 import com.calenaur.pandemic.api.register.Registrar;
 
 import java.util.ArrayList;
@@ -37,6 +44,7 @@ public class SharedGameDataViewModel extends ViewModel {
     //LocalUser Getters/Setters
     public void setLocalUser(LocalUser localUser) {
         this.localUser = localUser;
+        balance.setValue(localUser.getBalance());
     }
     public LocalUser getLocalUser() {
         return localUser;
@@ -55,13 +63,20 @@ public class SharedGameDataViewModel extends ViewModel {
     public void setRegistrar(Registrar registrar) { this.registrar = registrar; }
 
     //Balance Getter and Setter
-    public MutableLiveData<Long> getBalance() { return balance; }
+    public MutableLiveData<Long> getBalanceMutable() { return balance; }
+
+    public long getBalance() {
+        if (balance.getValue() == null)
+            return 0;
+
+        return balance.getValue();
+    }
 
     public void incrementBalance(){
         if (localUser == null)
             return;
 
-        if(balance.getValue() == null && localUser != null)
+        if (balance.getValue() == null && localUser != null)
             balance.setValue(localUser.getBalance());
 
         localUser.incrementBalance(clickValue);
@@ -111,6 +126,7 @@ public class SharedGameDataViewModel extends ViewModel {
         if (userMedication != null) {
             Medication medication = userMedication.getMedication(registrar.getMedicationRegistry());
             MedicationTrait[] medicationTraits = userMedication.getMedicationTraits(registrar.getMedicationTraitRegistry());
+            //Medication traits effectiveness
             if (medication != null) {
                 double value = medication.base_value;
                 if (medicationTraits != null)
@@ -118,8 +134,19 @@ public class SharedGameDataViewModel extends ViewModel {
                         value *= trait.getMultiplier();
 
                 clickValue = (int) Math.floor(value);
-                return;
             }
+
+            UserDisease[] userDiseases = getRegistrar().getUserDiseaseRegistry().toArray(new UserDisease[]{});
+            PairRegistry<MedicationDisease> mdRegistry = getRegistrar().getMedicationDiseaseRegistry();
+            //Active diseases effectiveness
+            for (UserDisease userDisease : userDiseases) {
+                KeyPair key = new KeyPair(userMedication.medication, userDisease.id);
+                if (mdRegistry.containsKey(key)) {
+                    MedicationDisease medicationDisease = mdRegistry.get(key);
+                    clickValue = (int) Math.floor(clickValue * (medicationDisease.effectiveness / 100d));
+                }
+            }
+            return;
         }
 
         clickValue =  BASE_CLICK_VALUE;

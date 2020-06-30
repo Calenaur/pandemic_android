@@ -44,8 +44,9 @@ public class ResearchFragment extends Fragment {
                 NavController navController = Navigation.findNavController(medicationLayout);
                 navController.popBackStack();
                 UserMedication userMedication = (UserMedication) args.getSerializable("user_medication");
-                //TODO::This will only work with ID from the database, make a PUT request first
-                data.getRegistrar().getUserMedicationRegistry().register(-1, userMedication);
+                if (userMedication != null)
+                    data.getRegistrar().getUserMedicationRegistry().register(userMedication.id, userMedication);
+
             }
 
         UserMedication[] medications = data.getMedications();

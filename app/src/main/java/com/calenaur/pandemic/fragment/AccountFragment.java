@@ -49,6 +49,7 @@ public class AccountFragment extends Fragment {
         guid.setText(localUser.getUid());
         username.setText(localUser.getUsername());
         balance.setText("$" + localUser.getBalance());
+        balance.setTextColor(getResources().getColor(R.color.colorMoney, null));
         access.setText(String.valueOf(localUser.getAccessLevel()));
         tier.setText(localUser.getTier().getName());
         tier.setTextColor(localUser.getTier().getColor());

@@ -13,6 +13,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +22,13 @@ import android.widget.LinearLayout;
 
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
+import com.calenaur.pandemic.api.API;
 import com.calenaur.pandemic.api.model.medication.Medication;
 import com.calenaur.pandemic.api.model.medication.MedicationTrait;
 import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.model.user.UserMedication;
+import com.calenaur.pandemic.api.net.response.ErrorCode;
+import com.calenaur.pandemic.api.store.PromiseHandler;
 import com.calenaur.pandemic.view.MedicineCardView;
 
 import java.lang.ref.WeakReference;
@@ -60,7 +64,7 @@ public class ResearchChoiceFragment extends Fragment implements BackActionListen
         ArrayList<Medication> candidates = new ArrayList<>();
 
         for (Medication medication : medications) {
-            if (-1 > localUser.getTier().getID())
+            if (medication.getTier().getID() > localUser.getTier().getID())
                 continue;
 
             candidates.add(medication);
@@ -112,12 +116,24 @@ public class ResearchChoiceFragment extends Fragment implements BackActionListen
                 traits.add(trait.id);
             }
 
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("user_medication", new UserMedication(-1, cardView.getMedication().id, traits.toArray(new Integer[]{})));
+        LocalUser localUser = data.getLocalUser();
+        UserMedication userMedication = new UserMedication(-1, cardView.getMedication().id, traits.toArray(new Integer[]{}));
+        data.getApi().getUserStore().putUserMedication(localUser, userMedication, new PromiseHandler<Integer>() {
+            @Override
+            public void onDone(Integer object) {
+                userMedication.id = object;
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("user_medication", userMedication);
 
-        NavController navController = Navigation.findNavController(researchCandidates);
-        navController.popBackStack(R.id.researchChoiceFragment, true);
-        navController.navigate(R.id.researchFragment, bundle);
+                NavController navController = Navigation.findNavController(researchCandidates);
+                navController.popBackStack(R.id.researchChoiceFragment, true);
+                navController.navigate(R.id.researchFragment, bundle);
+            }
+
+            @Override
+            public void onError(ErrorCode errorCode) {
+            }
+        });
     }
 
     @Override
