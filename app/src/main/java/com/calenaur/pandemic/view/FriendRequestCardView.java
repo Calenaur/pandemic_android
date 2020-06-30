@@ -30,7 +30,7 @@ public class FriendRequestCardView extends LinearLayout {
         name.setText(friend.getName());
         acceptButton.setOnClickListener((e) ->{
             sharedGameDataViewModel.sendFriendResponse(friend.getName(), 1);
-            Toast.makeText(getContext(),getResources().getString(R.string.friend_accepted)+" " + friend.getName(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),getResources().getString(R.string.friend_accepted)+" "+ friend.getName(), Toast.LENGTH_SHORT).show();
         });
         declineButton.setOnClickListener((e) ->{
             sharedGameDataViewModel.sendFriendResponse(friend.getName(), 2);
