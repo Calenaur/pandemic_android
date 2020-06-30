@@ -457,14 +457,10 @@ public class UserStore {
     }
 
     public void removeFriend(LocalUser localUser, String friend, PromiseHandler<Object> promiseHandler) {
-        Map<String, Object> formData = new HashMap<>();
-        formData.put("friend", friend);
-
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.DELETE)
-                .setPath("/user/friend")
+                .setPath("/user/friend/"+friend)
                 .setLocalUser(localUser)
-                .setFormData(formData)
                 .setRequestListener((code, result) -> {
                     DefaultResponse response;
                     try {
