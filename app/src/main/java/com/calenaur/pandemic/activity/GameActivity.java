@@ -30,6 +30,7 @@ import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.model.user.UserDisease;
 import com.calenaur.pandemic.api.model.user.UserEvent;
 import com.calenaur.pandemic.api.net.response.ErrorCode;
+
 import com.calenaur.pandemic.api.register.Registrar;
 import com.calenaur.pandemic.api.store.PromiseHandler;
 import com.calenaur.pandemic.app.PandemicApplication;

@@ -97,7 +97,6 @@ public class ResearchFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        data = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
     }
 
     public void onFABClick(View v) {

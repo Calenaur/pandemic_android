@@ -1,5 +1,7 @@
 package com.calenaur.pandemic.api.net;
 
+import android.annotation.SuppressLint;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -113,6 +115,7 @@ public class PandemicRequest extends JsonRequest<String> {
             return this;
         }
 
+        @SuppressLint("DefaultLocale")
         public PandemicRequest create() {
             System.out.println(String.format("[PandemicRequest] Request -> (method: %d, url: %s, form-data: %s)", method, url+path, formData));
             return new PandemicRequest(method, url + path, formData, localUser,

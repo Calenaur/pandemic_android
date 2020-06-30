@@ -11,6 +11,7 @@
         android:title="@string/research" />
 
     <item
+
         android:id="@id/eventFragment"
         android:icon="@drawable/ic_baseline_event_24"
         android:title="@string/event" />
@@ -19,6 +20,10 @@
         android:id="@id/diseaseFragment"
         android:icon="@drawable/ic_baseline_bug_report_24"
         android:title="@string/disease" />
+    <item
+        android:id="@id/friendsFragment"
+        android:icon="@drawable/ic_baseline_friends_24px"
+        android:title="@string/friends" />
 
     <item
         android:id="@id/accountFragment"

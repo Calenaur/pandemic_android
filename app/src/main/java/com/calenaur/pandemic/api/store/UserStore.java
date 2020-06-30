@@ -2,6 +2,7 @@ package com.calenaur.pandemic.api.store;
 
 import com.android.volley.Request;
 import com.calenaur.pandemic.api.model.Tier;
+import com.calenaur.pandemic.api.model.user.Friend;
 
 import com.calenaur.pandemic.api.model.user.JWT.JSONWebToken;
 import com.calenaur.pandemic.api.model.user.LocalUser;
@@ -24,7 +25,6 @@ import com.fasterxml.jackson.jr.ob.ValueIterator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class UserStore {
@@ -339,15 +339,16 @@ public class UserStore {
         httpClient.queue(request);
     }
 
-    public void friends(LocalUser localUser, PromiseHandler<FriendResponse[]> promiseHandler) {
+    public void friends(LocalUser localUser, PromiseHandler<Friend[]> promiseHandler) {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
-                .setPath("/user/friends")
+                .setPath("/user/friend")
                 .setLocalUser(localUser)
                 .setRequestListener((code, result) -> {
-                    ArrayList<FriendResponse> friendList = new ArrayList<>();
+                    ArrayList<Friend> friendList = new ArrayList<>();
+                    FriendResponse response = new FriendResponse();
                     try {
-                        ValueIterator<FriendResponse> values = JSON.std.beanSequenceFrom(FriendResponse.class, result);
+                        ValueIterator<Friend> values = JSON.std.beanSequenceFrom(Friend.class, result);
                         while (values.hasNext())
                             friendList.add(values.next());
                     } catch (IOException ignored) {
@@ -355,12 +356,42 @@ public class UserStore {
                         return;
                     }
 
+                    response.friends = friendList.toArray(new Friend[]{});
                     if (code == HTTPStatusCode.OK) {
-                        promiseHandler.onDone(friendList.toArray(new FriendResponse[]{}));
+                        promiseHandler.onDone(response.friends);
                         return;
                     }
 
-                    promiseHandler.onError(ErrorCode.fromResponse(null));
+                    promiseHandler.onError(ErrorCode.fromResponse(response));
+                }).create();
+
+        httpClient.queue(request);
+    }
+
+    public void friendRequests(LocalUser localUser, PromiseHandler<Friend[]> promiseHandler) {
+        PandemicRequest request = new PandemicRequest.Builder(httpClient)
+                .setMethod(Request.Method.GET)
+                .setPath("/user/friend/pending")
+                .setLocalUser(localUser)
+                .setRequestListener((code, result) -> {
+                    ArrayList<Friend> friendList = new ArrayList<>();
+                    FriendResponse response = new FriendResponse();
+                    try {
+                        ValueIterator<Friend> values = JSON.std.beanSequenceFrom(Friend.class, result);
+                        while (values.hasNext())
+                            friendList.add(values.next());
+                    } catch (IOException ignored) {
+                        promiseHandler.onError(ErrorCode.fromResponse(null));
+                        return;
+                    }
+
+                    response.friends = friendList.toArray(new Friend[]{});
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(response.friends);
+                        return;
+                    }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(response));
                 }).create();
 
         httpClient.queue(request);
@@ -372,7 +403,7 @@ public class UserStore {
 
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.POST)
-                .setPath("/user/friend_request")
+                .setPath("/user/friend")
                 .setLocalUser(localUser)
                 .setFormData(formData)
                 .setRequestListener((code, result) -> {
@@ -402,7 +433,7 @@ public class UserStore {
 
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.PUT)
-                .setPath("/user/friend_response")
+                .setPath("/user/friend")
                 .setLocalUser(localUser)
                 .setFormData(formData)
                 .setRequestListener((code, result) -> {
@@ -425,7 +456,7 @@ public class UserStore {
         httpClient.queue(request);
     }
 
-    public void removeFriend(LocalUser localUser, String friend, PromiseHandler<Void> promiseHandler) {
+    public void removeFriend(LocalUser localUser, String friend, PromiseHandler<Object> promiseHandler) {
         Map<String, Object> formData = new HashMap<>();
         formData.put("friend", friend);
 
