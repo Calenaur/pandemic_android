@@ -2,6 +2,7 @@ package com.calenaur.pandemic.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -20,8 +21,8 @@ public class MedicineCardView extends LinearLayout {
     private boolean clickable;
     private CardView card;
 
-    public MedicineCardView(Context context, UserMedication userMedication) {
-        this(context, userMedication.medication, userMedication.medicationTraits);
+    public MedicineCardView(Context context, UserMedication userMedication, Medication medication, MedicationTrait[] medicationTraits) {
+        this(context, medication, medicationTraits);
         this.userMedication = userMedication;
     }
 
@@ -80,11 +81,20 @@ public class MedicineCardView extends LinearLayout {
         }
     }
 
+    public void setSelected(boolean selected) {
+        if (selected) {
+            card.setBackgroundColor(Color.parseColor("#e3f2fd"));
+            return;
+        }
+
+        card.setBackgroundColor(Color.WHITE);
+    }
+
     public Medication getMedication() {
         return medication;
     }
 
-    public MedicationTrait[] getMedicationTier() {
+    public MedicationTrait[] getMedicationTraits() {
         return medicationTraits;
     }
 

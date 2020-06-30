@@ -2,7 +2,6 @@ package com.calenaur.pandemic.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -11,10 +10,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -30,6 +29,7 @@ import com.calenaur.pandemic.view.MedicineCardView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -106,13 +106,18 @@ public class ResearchChoiceFragment extends Fragment implements BackActionListen
             return;
 
         MedicineCardView cardView = (MedicineCardView) v;
+        LinkedList<Integer> traits = new LinkedList<>();
+        if (cardView.getMedicationTraits() != null)
+            for (MedicationTrait trait : cardView.getMedicationTraits()) {
+                traits.add(trait.id);
+            }
+
         Bundle bundle = new Bundle();
-        bundle.putSerializable("user_medication", new UserMedication(-1, cardView.getMedication(), cardView.getMedicationTier()));
+        bundle.putSerializable("user_medication", new UserMedication(-1, cardView.getMedication().id, traits.toArray(new Integer[]{})));
 
         NavController navController = Navigation.findNavController(researchCandidates);
         navController.popBackStack(R.id.researchChoiceFragment, true);
         navController.navigate(R.id.researchFragment, bundle);
-
     }
 
     @Override
@@ -183,5 +188,4 @@ public class ResearchChoiceFragment extends Fragment implements BackActionListen
             return null;
         }
     }
-
 }

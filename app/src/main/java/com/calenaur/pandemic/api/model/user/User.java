@@ -39,6 +39,9 @@ public class User implements Serializable {
         return balance;
     }
 
+    public void setTier(Tier tier) {
+        this.tier = tier;
+    }
 
     public Tier getTier() {
         return tier;

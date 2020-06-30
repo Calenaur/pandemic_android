@@ -22,6 +22,10 @@ public class Registry<T> {
         return register.get(id);
     }
 
+    public boolean containsKey(int key) {
+        return register.containsKey(key);
+    }
+
     public T[] toArray(T[] a) {
         return register.values().toArray(a);
     }

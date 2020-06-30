@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.calenaur.pandemic.api.API;
+import com.calenaur.pandemic.api.model.medication.Medication;
 import com.calenaur.pandemic.api.model.medication.MedicationTrait;
 import com.calenaur.pandemic.api.model.user.LocalUser;
 import com.calenaur.pandemic.api.model.user.UserMedication;
@@ -57,11 +58,25 @@ public class SharedGameDataViewModel extends ViewModel {
     public MutableLiveData<Long> getBalance() { return balance; }
 
     public void incrementBalance(){
-        if(balance.getValue() == null && localUser != null){
+        if (localUser == null)
+            return;
+
+        if(balance.getValue() == null && localUser != null)
             balance.setValue(localUser.getBalance());
-        }
+
         localUser.incrementBalance(clickValue);
         balance.setValue(balance.getValue() + clickValue);
+    }
+
+    public void pay(int amount){
+        if (localUser == null)
+            return;
+
+        if(balance.getValue() == null && localUser != null)
+            balance.setValue(localUser.getBalance());
+
+        localUser.incrementBalance(-amount);
+        balance.setValue(balance.getValue() + amount);
     }
 
     public String getClickValue() {
@@ -93,16 +108,19 @@ public class SharedGameDataViewModel extends ViewModel {
 
     public void calcClickValue() {
         UserMedication userMedication = getCurrentMedication();
-        if (userMedication != null)
-            if (userMedication.medication != null) {
-                double value = userMedication.medication.base_value;
-                if (userMedication.medicationTraits != null)
-                    for (MedicationTrait trait : userMedication.medicationTraits)
+        if (userMedication != null) {
+            Medication medication = userMedication.getMedication(registrar.getMedicationRegistry());
+            MedicationTrait[] medicationTraits = userMedication.getMedicationTraits(registrar.getMedicationTraitRegistry());
+            if (medication != null) {
+                double value = medication.base_value;
+                if (medicationTraits != null)
+                    for (MedicationTrait trait : medicationTraits)
                         value *= trait.getMultiplier();
 
                 clickValue = (int) Math.floor(value);
                 return;
             }
+        }
 
         clickValue =  BASE_CLICK_VALUE;
     }

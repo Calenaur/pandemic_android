@@ -49,4 +49,8 @@ public class TitledTextView extends LinearLayout {
     public void setText(String text) {
         textView.setText(text);
     }
+
+    public void setTextColor(int color) {
+        textView.setTextColor(color);
+    }
 }
