@@ -7,6 +7,7 @@ import com.calenaur.pandemic.api.model.user.Friend;
 
 import com.calenaur.pandemic.api.model.user.JWT.JSONWebToken;
 import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.api.model.user.UserDisease;
 import com.calenaur.pandemic.api.model.user.UserEvent;
 import com.calenaur.pandemic.api.model.user.UserMedication;
 import com.calenaur.pandemic.api.net.HTTPClient;
@@ -125,7 +126,7 @@ public class UserStore {
         PandemicRequest request = new PandemicRequest.Builder(httpClient)
                 .setMethod(Request.Method.GET)
                 .setLocalUser(localUser)
-                .setPath("/user/event/mine")
+                .setPath("/user/event")
                 .setRequestListener((code, result) -> {
                     ArrayList<UserEvent> userEventList = new ArrayList<>();
                     try {
@@ -149,8 +150,10 @@ public class UserStore {
     }
 
     public void putUserEvent(LocalUser localUser, UserEvent userEvent, PromiseHandler<Void> promiseHandler) {
-        if (localUser == null || userEvent == null)
+        if (localUser == null || userEvent == null) {
+            promiseHandler.onError(null);
             return;
+        }
 
         Map<String, Object> formData = new HashMap<>();
         formData.put("event", userEvent.id);
@@ -158,6 +161,83 @@ public class UserStore {
                 .setMethod(Request.Method.PUT)
                 .setLocalUser(localUser)
                 .setPath("/user/event")
+                .setFormData(formData)
+                .setRequestListener((code, result) -> {
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(null);
+                        return;
+                    }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(null));
+                }).create();
+
+        httpClient.queue(request);
+    }
+
+    public void getUserDiseases(LocalUser localUser, PromiseHandler<UserDisease[]> promiseHandler) {
+        PandemicRequest request = new PandemicRequest.Builder(httpClient)
+                .setMethod(Request.Method.GET)
+                .setLocalUser(localUser)
+                .setPath("/user/disease")
+                .setRequestListener((code, result) -> {
+                    ArrayList<UserDisease> userDiseaseList = new ArrayList<>();
+                    try {
+                        ValueIterator<UserDisease> values = JSON.std.beanSequenceFrom(UserDisease.class, result);
+                        while (values.hasNext())
+                            userDiseaseList.add(values.next());
+                    } catch (IOException ignored) {
+                        promiseHandler.onError(ErrorCode.fromResponse(null));
+                        return;
+                    }
+
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(userDiseaseList.toArray(new UserDisease[]{}));
+                        return;
+                    }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(null));
+                }).create();
+
+        httpClient.queue(request);
+    }
+
+    public void putUserDisease(LocalUser localUser, UserDisease userDisease, PromiseHandler<Void> promiseHandler) {
+        if (localUser == null || userDisease == null) {
+            promiseHandler.onError(null);
+            return;
+        }
+
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("diseaseid", userDisease.id);
+        PandemicRequest request = new PandemicRequest.Builder(httpClient)
+                .setMethod(Request.Method.POST)
+                .setLocalUser(localUser)
+                .setPath("/user/disease")
+                .setFormData(formData)
+                .setRequestListener((code, result) -> {
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(null);
+                        return;
+                    }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(null));
+                }).create();
+
+        httpClient.queue(request);
+    }
+
+    public void putBalance(LocalUser localUser, long newBalance, PromiseHandler<Void> promiseHandler) {
+        if (localUser == null) {
+            promiseHandler.onError(null);
+            return;
+        }
+
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("newbalance", newBalance);
+        PandemicRequest request = new PandemicRequest.Builder(httpClient)
+                .setMethod(Request.Method.PUT)
+                .setLocalUser(localUser)
+                .setPath("/user/balance")
                 .setFormData(formData)
                 .setRequestListener((code, result) -> {
                     if (code == HTTPStatusCode.OK) {

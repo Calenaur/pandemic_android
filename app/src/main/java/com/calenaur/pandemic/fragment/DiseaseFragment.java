@@ -14,26 +14,26 @@ import android.widget.LinearLayout;
 
 import com.calenaur.pandemic.R;
 import com.calenaur.pandemic.SharedGameDataViewModel;
-import com.calenaur.pandemic.api.model.event.Event;
 import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.api.model.user.UserDisease;
 import com.calenaur.pandemic.api.model.user.UserEvent;
 import com.calenaur.pandemic.view.DiseaseCardView;
 import com.calenaur.pandemic.view.EventCardView;
-import com.calenaur.pandemic.view.TitledTextView;
+import com.calenaur.pandemic.view.MedicineCardView;
 
-public class EventFragment extends Fragment {
+public class DiseaseFragment extends Fragment {
 
-    private LinearLayout eventLayout;
+    private LinearLayout diseaseLayout;
     private SharedGameDataViewModel data;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_event, container, false);
+        return inflater.inflate(R.layout.fragment_disease, container, false);
     }
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         data = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
-        eventLayout = view.findViewById(R.id.events);
+        diseaseLayout = view.findViewById(R.id.diseases);
         refresh();
     }
 
@@ -46,18 +46,18 @@ public class EventFragment extends Fragment {
         if (localUser == null)
             return;
 
-        EventCardView.LayoutParams layoutParams = new EventCardView.LayoutParams(EventCardView.LayoutParams.MATCH_PARENT, EventCardView.LayoutParams.WRAP_CONTENT);
+        UserDisease[] userDiseases = data.getRegistrar().getUserDiseaseRegistry().toArray(new UserDisease[]{});
+        if (userDiseases.length > 0)
+            diseaseLayout.removeAllViews();
+
+        DiseaseCardView.LayoutParams layoutParams = new DiseaseCardView.LayoutParams(DiseaseCardView.LayoutParams.MATCH_PARENT, DiseaseCardView.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(10, 10, 10, 10);
 
-        UserEvent[] userEvents = data.getRegistrar().getUserEventRegistry().toArray(new UserEvent[]{});
-        if (userEvents.length > 0)
-            eventLayout.removeAllViews();
-
-        for (UserEvent event : userEvents)
-            if (event != null) {
-                EventCardView card = new EventCardView(getContext(), data.getRegistrar().getEventRegistry().get(event.id));
+        for (UserDisease disease : userDiseases)
+            if (disease != null) {
+                DiseaseCardView card = new DiseaseCardView(getContext(), data.getRegistrar().getDiseaseRegistry().get(disease.id));
                 card.setLayoutParams(layoutParams);
-                eventLayout.addView(card);
+                diseaseLayout.addView(card);
             }
     }
 }

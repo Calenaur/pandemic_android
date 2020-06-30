@@ -6,9 +6,12 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.calenaur.pandemic.api.API;
+import com.calenaur.pandemic.api.model.disease.Disease;
 import com.calenaur.pandemic.api.model.medication.Medication;
 import com.calenaur.pandemic.api.model.medication.MedicationTrait;
 import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.api.model.user.User;
+import com.calenaur.pandemic.api.model.user.UserDisease;
 import com.calenaur.pandemic.api.model.user.UserMedication;
 import com.calenaur.pandemic.api.register.Registrar;
 
@@ -37,6 +40,7 @@ public class SharedGameDataViewModel extends ViewModel {
     //LocalUser Getters/Setters
     public void setLocalUser(LocalUser localUser) {
         this.localUser = localUser;
+        balance.setValue(localUser.getBalance());
     }
     public LocalUser getLocalUser() {
         return localUser;
@@ -55,13 +59,20 @@ public class SharedGameDataViewModel extends ViewModel {
     public void setRegistrar(Registrar registrar) { this.registrar = registrar; }
 
     //Balance Getter and Setter
-    public MutableLiveData<Long> getBalance() { return balance; }
+    public MutableLiveData<Long> getBalanceMutable() { return balance; }
+
+    public long getBalance() {
+        if (balance.getValue() == null)
+            return 0;
+
+        return balance.getValue();
+    }
 
     public void incrementBalance(){
         if (localUser == null)
             return;
 
-        if(balance.getValue() == null && localUser != null)
+        if (balance.getValue() == null && localUser != null)
             balance.setValue(localUser.getBalance());
 
         localUser.incrementBalance(clickValue);
@@ -120,6 +131,15 @@ public class SharedGameDataViewModel extends ViewModel {
                 clickValue = (int) Math.floor(value);
                 return;
             }
+
+            //TODO::Effectiveness
+            /*
+            UserDisease[] userDiseases = registrar.getUserDiseaseRegistry().toArray(new UserDisease[]{});
+            for (UserDisease userDisease : userDiseases) {
+                Disease disease = userDisease.getDisease(registrar.getDiseaseRegistry());
+
+            }
+             */
         }
 
         clickValue =  BASE_CLICK_VALUE;

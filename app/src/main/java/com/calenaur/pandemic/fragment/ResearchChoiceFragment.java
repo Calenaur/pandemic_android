@@ -60,7 +60,7 @@ public class ResearchChoiceFragment extends Fragment implements BackActionListen
         ArrayList<Medication> candidates = new ArrayList<>();
 
         for (Medication medication : medications) {
-            if (-1 > localUser.getTier().getID())
+            if (medication.getTier().getID() > localUser.getTier().getID())
                 continue;
 
             candidates.add(medication);

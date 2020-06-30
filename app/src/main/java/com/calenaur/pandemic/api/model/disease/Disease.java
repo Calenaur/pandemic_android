@@ -2,12 +2,16 @@ package com.calenaur.pandemic.api.model.disease;
 
 import com.calenaur.pandemic.api.model.Tier;
 
-public class Disease {
+public class Disease extends Tier.Tiered {
 
-    private int id;
-    private String name;
-    private String description;
-    private int rarity;
-    private Tier tier;
+    public int id;
+    public int tier;
+    public String name;
+    public String description;
+    public int rarity;
 
+    @Override
+    public Tier getTier() {
+        return getTier(tier);
+    }
 }

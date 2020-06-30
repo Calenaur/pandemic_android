@@ -27,6 +27,7 @@ import com.calenaur.pandemic.api.API;
 import com.calenaur.pandemic.api.model.Tier;
 import com.calenaur.pandemic.api.model.event.Event;
 import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.api.model.user.UserDisease;
 import com.calenaur.pandemic.api.model.user.UserEvent;
 import com.calenaur.pandemic.api.net.response.ErrorCode;
 import com.calenaur.pandemic.api.register.Registrar;
@@ -42,14 +43,17 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int EVENT_DELAY_MILLIS = 200;
+    private static final int EVENT_DELAY_MILLIS = 1000;
+    private static final int SAVE_DELAY_MILLIS = 60000;
 
     private ConstraintLayout loader;
     private DrawerLayout drawerLayout;
     private NavController navController;
     private LocalUser localUser;
     private Handler eventHandler;
+    private Handler saveHandler;
     private SharedGameDataViewModel data;
+    private long lastBalance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +72,8 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             data.setLocalUser(localUser);
             data.setApi(api);
             data.setRegistrar(registrar);
+            lastBalance = data.getBalance();
+            startSaveHandler();
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -79,12 +85,16 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
         NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout);
         NavigationUI.setupWithNavController(navView, navController);
         navView.setNavigationItemSelectedListener(this);
-
     }
 
     public void startEventHandler() {
         eventHandler = new Handler();
         eventHandler.postDelayed(this::handleEvent, EVENT_DELAY_MILLIS);
+    }
+
+    public void startSaveHandler() {
+        saveHandler = new Handler();
+        saveHandler.postDelayed(this::handleSave, SAVE_DELAY_MILLIS);
     }
 
     private void handleEvent() {
@@ -113,7 +123,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
                                 onEvent(localUser, event);
                                 AlertDialog dialog = new AlertDialog.Builder(gameActivity)
                                         .setTitle(event.name)
-                                        .setCancelable(true)
+                                        .setCancelable(false)
                                         .setMessage(event.description)
                                         .setPositiveButton(R.string.ok, null)
                                         .create();
@@ -133,6 +143,7 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void onEvent(LocalUser localUser, Event event) {
+        UserDisease userDisease = null;
         switch (event.id) {
             case 1:
                 localUser.setTier(Tier.Uncommon);
@@ -155,7 +166,40 @@ public class GameActivity extends AppCompatActivity implements NavigationView.On
             case 8:
                 data.pay(5000);
                 break;
+            case 9:
+                userDisease = new UserDisease(localUser.getUid(), 1);
+                break;
+            case 10:
+                userDisease = new UserDisease(localUser.getUid(), 2);
+                break;
         }
+
+        if (userDisease != null) {
+            final UserDisease finalUserDisease = userDisease;
+            data.getApi().getUserStore().putUserDisease(localUser, userDisease, new PromiseHandler<Void>() {
+                @Override
+                public void onDone(Void object) {
+                    data.getRegistrar().getUserDiseaseRegistry().register(finalUserDisease.id, finalUserDisease);
+                    data.calcClickValue();
+                }
+
+                @Override
+                public void onError(ErrorCode errorCode) {
+
+                }
+            });
+        } else {
+            data.calcClickValue();
+        }
+    }
+
+    private void handleSave() {
+        long balance = data.getBalance();
+        if (lastBalance != balance) {
+            data.getApi().getUserStore().putBalance(localUser, data.getBalance(), PromiseHandler.EMPTY_HANDLER);
+            lastBalance = balance;
+        }
+        saveHandler.postDelayed(this::handleSave, SAVE_DELAY_MILLIS);
     }
 
     private Fragment getCurrentFragment() {

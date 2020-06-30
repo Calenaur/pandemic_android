@@ -3,10 +3,12 @@ package com.calenaur.pandemic.api.register;
 import android.util.Log;
 
 import com.calenaur.pandemic.api.API;
+import com.calenaur.pandemic.api.model.disease.Disease;
 import com.calenaur.pandemic.api.model.event.Event;
 import com.calenaur.pandemic.api.model.medication.Medication;
 import com.calenaur.pandemic.api.model.medication.MedicationTrait;
 import com.calenaur.pandemic.api.model.user.LocalUser;
+import com.calenaur.pandemic.api.model.user.UserDisease;
 import com.calenaur.pandemic.api.model.user.UserEvent;
 import com.calenaur.pandemic.api.model.user.UserMedication;
 import com.calenaur.pandemic.api.net.response.ErrorCode;
@@ -24,6 +26,8 @@ public class Registrar {
     private Registry<UserMedication> userMedicationRegistry;
     private Registry<Event> eventRegistry;
     private Registry<UserEvent> userEventRegistry;
+    private Registry<Disease> diseaseRegistry;
+    private Registry<UserDisease> userDiseaseRegistry;
 
     public Registrar() {
         registries = new LinkedList<>();
@@ -42,6 +46,12 @@ public class Registrar {
 
         userEventRegistry = new Registry<>();
         registries.add(userEventRegistry);
+
+        diseaseRegistry = new Registry<>();
+        registries.add(diseaseRegistry);
+
+        userDiseaseRegistry = new Registry<>();
+        registries.add(userDiseaseRegistry);
     }
 
     public void updateAll(API api, LocalUser localUser) {
@@ -52,6 +62,8 @@ public class Registrar {
         updateUserMedicationRegistry(api, localUser);
         updateEventRegistry(api, localUser);
         updateUserEventRegistry(api, localUser);
+        updateDiseaseRegistry(api, localUser);
+        updateUserDiseaseRegistry(api, localUser);
     }
 
     public void updateMedicationRegistry(API api, LocalUser localUser) {
@@ -70,7 +82,7 @@ public class Registrar {
 
             @Override
             public void onError(ErrorCode errorCode) {
-
+                Log.e("TAG", "onError: "+errorCode);
             }
         });
     }
@@ -91,7 +103,7 @@ public class Registrar {
 
             @Override
             public void onError(ErrorCode errorCode) {
-
+                Log.e("TAG", "onError: "+errorCode);
             }
         });
     }
@@ -119,7 +131,7 @@ public class Registrar {
     }
 
     private void updateEventRegistry(API api, LocalUser localUser) {
-        api.getEventStore().events(localUser, new PromiseHandler<Event[]>() {
+        api.getEventStore().getEvents(localUser, new PromiseHandler<Event[]>() {
             @Override
             public void onDone(Event[] object) {
                 eventRegistry.clear();
@@ -162,6 +174,52 @@ public class Registrar {
         });
     }
 
+    private void updateDiseaseRegistry(API api, LocalUser localUser) {
+        api.getDiseaseStore().getDiseases(localUser, new PromiseHandler<Disease[]>() {
+            @Override
+            public void onDone(Disease[] object) {
+                diseaseRegistry.clear();
+                if (object == null)
+                    return;
+
+                for (Disease disease : object)
+                    if (disease != null)
+                        diseaseRegistry.register(disease.id, disease);
+
+                updateDone();
+            }
+
+            @Override
+            public void onError(ErrorCode errorCode) {
+                Log.e("TAG", "onError: "+errorCode);
+            }
+        });
+    }
+
+    private void updateUserDiseaseRegistry(API api, LocalUser localUser) {
+        api.getUserStore().getUserDiseases(localUser, new PromiseHandler<UserDisease[]>() {
+            @Override
+            public void onDone(UserDisease[] object) {
+                userDiseaseRegistry.clear();
+                if (object == null)
+                    return;
+
+                for (UserDisease userDisease : object)
+                    if (userDisease != null) {
+                        userDisease.user = localUser.getUid();
+                        userDiseaseRegistry.register(userDisease.id, userDisease);
+                    }
+
+                updateDone();
+            }
+
+            @Override
+            public void onError(ErrorCode errorCode) {
+                Log.e("TAG", "onError: "+errorCode);
+            }
+        });
+    }
+
     public Registry<Medication> getMedicationRegistry() {
         return medicationRegistry;
     }
@@ -180,6 +238,14 @@ public class Registrar {
 
     public Registry<UserEvent> getUserEventRegistry() {
         return userEventRegistry;
+    }
+
+    public Registry<Disease> getDiseaseRegistry() {
+        return diseaseRegistry;
+    }
+
+    public Registry<UserDisease> getUserDiseaseRegistry() {
+        return userDiseaseRegistry;
     }
 
     private void updateDone() {

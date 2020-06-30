@@ -86,7 +86,7 @@ public class ProductionFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         sharedGameDataViewModel = ViewModelProviders.of(requireActivity()).get(SharedGameDataViewModel.class);
         counter.setText(balanceText + sharedGameDataViewModel.getLocalUser().getBalance());
-        sharedGameDataViewModel.getBalance().observe(getViewLifecycleOwner(), user -> {
+        sharedGameDataViewModel.getBalanceMutable().observe(getViewLifecycleOwner(), user -> {
             counter.setText(balanceText + sharedGameDataViewModel.getBalanceAppendix());
         });
     }

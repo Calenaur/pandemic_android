@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_productionFragment_to_eventFragment"
             app:destination="@id/eventFragment" />
+        <action
+            android:id="@+id/action_productionFragment_to_diseaseFragment"
+            app:destination="@id/diseaseFragment" />
     </fragment>
 
     <fragment
@@ -60,5 +63,14 @@
         android:name="com.calenaur.pandemic.fragment.ResearchChoiceFragment"
         android:label="@string/research_options"
         tools:layout="@layout/fragment_research_choice" />
+    <fragment
+        android:id="@+id/diseaseFragment"
+        android:name="com.calenaur.pandemic.fragment.DiseaseFragment"
+        android:label="@string/disease"
+        tools:layout="@layout/fragment_disease">
+        <argument
+            android:name="local_user"
+            app:argType="com.calenaur.pandemic.api.model.user.LocalUser" />
+    </fragment>
 
 </navigation>
