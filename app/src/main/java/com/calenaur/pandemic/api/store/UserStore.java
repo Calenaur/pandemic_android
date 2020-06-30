@@ -368,6 +368,35 @@ public class UserStore {
         httpClient.queue(request);
     }
 
+    public void friendRequests(LocalUser localUser, PromiseHandler<Friend[]> promiseHandler) {
+        PandemicRequest request = new PandemicRequest.Builder(httpClient)
+                .setMethod(Request.Method.GET)
+                .setPath("/user/friend/pending")
+                .setLocalUser(localUser)
+                .setRequestListener((code, result) -> {
+                    ArrayList<Friend> friendList = new ArrayList<>();
+                    FriendResponse response = new FriendResponse();
+                    try {
+                        ValueIterator<Friend> values = JSON.std.beanSequenceFrom(Friend.class, result);
+                        while (values.hasNext())
+                            friendList.add(values.next());
+                    } catch (IOException ignored) {
+                        promiseHandler.onError(ErrorCode.fromResponse(null));
+                        return;
+                    }
+
+                    response.friends = friendList.toArray(new Friend[]{});
+                    if (code == HTTPStatusCode.OK) {
+                        promiseHandler.onDone(response.friends);
+                        return;
+                    }
+
+                    promiseHandler.onError(ErrorCode.fromResponse(response));
+                }).create();
+
+        httpClient.queue(request);
+    }
+
     public void sendFriendRequest(LocalUser localUser, String friend, PromiseHandler<Object> promiseHandler) {
         Map<String, Object> formData = new HashMap<>();
         formData.put("friend", friend);

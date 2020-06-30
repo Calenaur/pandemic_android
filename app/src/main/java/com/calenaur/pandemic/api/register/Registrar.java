@@ -18,7 +18,6 @@ import com.calenaur.pandemic.api.net.response.ErrorCode;
 import com.calenaur.pandemic.api.store.PromiseHandler;
 
 import java.util.LinkedList;
-import java.util.Arrays;
 
 public class Registrar {
 
@@ -35,6 +34,8 @@ public class Registrar {
     private Registry<Disease> diseaseRegistry;
     private Registry<UserDisease> userDiseaseRegistry;
     private Registry<Friend> friendRegistry;
+    private Registry<Friend> requestRegistry;
+
 
     public Registrar() {
         registries = new LinkedList<>();
@@ -65,6 +66,10 @@ public class Registrar {
 
         friendRegistry = new Registry<>();
         registries.add(friendRegistry);
+
+        requestRegistry = new Registry<>();
+        registries.add(requestRegistry);
+
     }
 
     public void updateAll(API api, LocalUser localUser) {
@@ -79,6 +84,7 @@ public class Registrar {
         updateDiseaseRegistry(api, localUser);
         updateUserDiseaseRegistry(api, localUser);
         updateFriendRegistry(api, localUser);
+        updateRequestRegistry(api, localUser);
     }
 
     public void updateMedicationRegistry(API api, LocalUser localUser) {
@@ -252,6 +258,7 @@ public class Registrar {
             @Override
             public void onError(ErrorCode errorCode) {
                 Log.e("ERROR", "updateUserDiseaseRegistry: "+errorCode);
+
             }
         });
     }
@@ -260,13 +267,11 @@ public class Registrar {
         api.getUserStore().friends(localUser, new PromiseHandler<Friend[]>() {
             @Override
             public void onDone(Friend[] object) {
-                System.out.println("------------------------------------------");
-                System.out.println(Arrays.toString(object));
                 friendRegistry.clear();
                 if (object == null)
                     return;
 
-                for (int i= 0; i<object.length; i++) {
+                for (int i = 0; i < object.length; i++) {
                     if (object[i] == null)
                         continue;
                     friendRegistry.register(
@@ -277,7 +282,31 @@ public class Registrar {
 
             @Override
             public void onError(ErrorCode errorCode) {
-                Log.e("TAG", "onError: "+errorCode);
+                Log.e("TAG", "onError: " + errorCode);
+            }
+        });
+    }
+
+    public void updateRequestRegistry(API api, LocalUser localUser) {
+        api.getUserStore().friendRequests(localUser, new PromiseHandler<Friend[]>() {
+            @Override
+            public void onDone(Friend[] object) {
+                requestRegistry.clear();
+                if (object == null)
+                    return;
+
+                for (int i = 0; i < object.length; i++) {
+                    if (object[i] == null)
+                        continue;
+                    requestRegistry.register(
+                            i, object[i]
+                    );
+                }
+            }
+
+            @Override
+            public void onError(ErrorCode errorCode) {
+                Log.e("TAG", "onError: " + errorCode);
             }
         });
     }
@@ -317,6 +346,9 @@ public class Registrar {
 
     public Registry<Friend> getFriendRegistry() {
         return friendRegistry;
+    }
+    public Registry<Friend> getRequestRegistry() {
+        return requestRegistry;
     }
 
     private void updateDone() {

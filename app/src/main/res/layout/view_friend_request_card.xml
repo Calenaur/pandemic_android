@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:layout_alignParentStart="true"
+                android:textSize="18sp" />
+
+
+            <ImageButton
+                android:id="@+id/accept_friend_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:contentDescription="@string/accept_friend"
+                android:layout_toStartOf="@id/decline_friend_button"
+                android:src="@drawable/ic_friend_add_24px" />
+
+            <ImageButton
+                android:id="@+id/decline_friend_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:contentDescription="@string/decline_friend"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_friend_remove_24px"
+                android:text="@string/decline_friend" />
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>
+

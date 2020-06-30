@@ -29,7 +29,7 @@
             app:destination="@id/diseaseFragment" />
         <action
             android:id="@+id/action_productionFragment_to_friendFragment"
-            app:destination="@id/friendFragment" />
+            app:destination="@id/friendsFragment" />
     </fragment>
 
     <fragment
@@ -77,9 +77,27 @@
     </fragment>
 
     <fragment
-        android:id="@+id/friendFragment"
-        android:name="com.calenaur.pandemic.fragment.FriendFragment"
+        android:id="@+id/friendsFragment"
+        android:name="com.calenaur.pandemic.fragment.FriendsFragment"
         android:label="@string/friends"
+        tools:layout="@layout/fragment_friends">
+        <action
+            android:id="@+id/action_friendsFragment_to_friendListFragment"
+            app:destination="@id/friendListFragment" />
+        <action
+            android:id="@+id/action_friendsFragment_to_friendRequestListFragment"
+            app:destination="@id/friendRequestListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/friendListFragment"
+        android:name="com.calenaur.pandemic.fragment.FriendListFragment"
+        android:label="fragment_friend_list"
         tools:layout="@layout/fragment_friend_list" />
+
+    <fragment
+        android:id="@+id/friendRequestListFragment"
+        android:name="com.calenaur.pandemic.fragment.FriendRequestListFragment"
+        android:label="fragment_friend_request_list"
+        tools:layout="@layout/fragment_friend_request_list" />
 
 </navigation>

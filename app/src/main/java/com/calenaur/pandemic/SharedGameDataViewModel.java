@@ -1,6 +1,9 @@
 package com.calenaur.pandemic;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -74,17 +77,32 @@ public class SharedGameDataViewModel extends ViewModel {
     //Friend getter
     public Friend[] getFriends() { return registrar.getFriendRegistry().toArray(new Friend[]{}); }
 
+    public Friend[] getRequests() { return registrar.getRequestRegistry().toArray(new Friend[]{}); }
+
+    public void sendFriendResponse(String friend, int response){
+        api.getUserStore().sendFriendResponse(localUser, friend, response, new PromiseHandler<Object>() {
+            @Override
+            public void onDone(Object object) {}
+            @Override
+            public void onError(ErrorCode errorCode) {}
+        });
+    }
+
     public void addFriend(String friend){
         api.getUserStore().sendFriendRequest(localUser, friend, new PromiseHandler<Object>() {
             @Override
-            public void onDone(Object object) {
-
-            }
-
+            public void onDone(Object object) {}
             @Override
-            public void onError(ErrorCode errorCode) {
+            public void onError(ErrorCode errorCode) {}
+        });
+    }
 
-            }
+    public void removeFriend(String friend){
+        api.getUserStore().removeFriend(localUser, friend, new PromiseHandler<Object>() {
+            @Override
+            public void onDone(Object object) {}
+            @Override
+            public void onError(ErrorCode errorCode) {}
         });
     }
 
