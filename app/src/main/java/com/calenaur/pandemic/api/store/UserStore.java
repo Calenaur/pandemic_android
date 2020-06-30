@@ -456,7 +456,7 @@ public class UserStore {
         httpClient.queue(request);
     }
 
-    public void removeFriend(LocalUser localUser, String friend, PromiseHandler<Void> promiseHandler) {
+    public void removeFriend(LocalUser localUser, String friend, PromiseHandler<Object> promiseHandler) {
         Map<String, Object> formData = new HashMap<>();
         formData.put("friend", friend);
 
