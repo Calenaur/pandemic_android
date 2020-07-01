@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "436952495021",
+    "firebase_url": "https://pandemic-clicker.firebaseio.com",
+    "project_id": "pandemic-clicker",
+    "storage_bucket": "pandemic-clicker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436952495021:android:ad3c3a8dc5bc7ce685e724",
+        "android_client_info": {
+          "package_name": "com.calenaur.pandemic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "436952495021-pld9p6vtfannkaqf9jlt33d8s988a9qe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCybR4AcxKu1Zp2q0jwS_vR_l4tRQG5vvc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "436952495021-pld9p6vtfannkaqf9jlt33d8s988a9qe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

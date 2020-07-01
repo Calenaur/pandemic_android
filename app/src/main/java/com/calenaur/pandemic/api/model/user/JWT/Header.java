@@ -1,6 +1,8 @@
 package com.calenaur.pandemic.api.model.user.JWT;
 
-public class Header {
+import java.io.Serializable;
+
+public class Header implements Serializable {
     public String alg;
     public String typ;
 }

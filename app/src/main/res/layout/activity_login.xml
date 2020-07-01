@@ -79,7 +79,7 @@
                 android:textColor="@android:color/background_dark" />
 
             <Button
-                android:id="@+id/register"
+                android:id="@+id/submitRegister"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

@@ -3,9 +3,10 @@ package com.calenaur.pandemic.api.model.user.JWT;
 import com.fasterxml.jackson.jr.ob.JSON;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Base64;
 
-public class JSONWebToken {
+public class JSONWebToken implements Serializable {
 
     private String origin;
     private Header header;
@@ -19,7 +20,7 @@ public class JSONWebToken {
         this.signature = signature;
     }
 
-    public static JSONWebToken fromToken(String token) {
+    public static JSONWebToken fromString(String token) {
         String[] splitToken = token.split("[.]");
         if (splitToken.length < 3)
             return null;
@@ -36,6 +37,12 @@ public class JSONWebToken {
         return null;
     }
 
+    public String getOrigin() {
+        return origin;
+    }
 
+    public Payload getPayload() {
+        return payload;
+    }
 
 }
