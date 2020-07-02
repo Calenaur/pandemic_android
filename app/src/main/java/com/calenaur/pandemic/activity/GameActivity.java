@@ -44,7 +44,7 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int EVENT_DELAY_MILLIS = 5000;
+    private static final int EVENT_DELAY_MILLIS = 30000;
     private static final int SAVE_DELAY_MILLIS = 60000;
 
     private ConstraintLayout loader;
